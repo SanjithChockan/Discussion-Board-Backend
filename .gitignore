@@ -1,4 +1,4 @@
-.idea/
+/.idea/
 /aws_credentials.py
-__pycache__/
-main/__pycache__/
+/__pycache__/
+/main/__pycache__/
