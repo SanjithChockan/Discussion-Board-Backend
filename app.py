@@ -1,10 +1,10 @@
 from flask import Flask
 import mysql.connector
-from main import routes
+from main.routes import CRUD
 import aws_credentials as rds
 
 app = Flask(__name__)
-app.register_blueprint(routes.bp)
+app.register_blueprint(CRUD.bp)
 
 app.config['MYSQL_HOST'] = rds.host
 app.config['MYSQL_USER'] = rds.user
