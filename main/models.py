@@ -1,15 +1,12 @@
 from flask_sqlalchemy import SQLAlchemy
+from app import db
 
-db = SQLAlchemy()
-
-class Post(db.Model):
-    id = db.Column('PostID', db.Integer, primary_key=True)
-    user_id = db.Column('UserID', db.ForeignKey('UserID'), nullable=False)
-    course_id = db.Column('CourseID', db.ForeignKey('CourseID'), nullable=False)
-    title = db.Column('PostTitle', db.String(255), nullable=False)
-    content = db.Column('PostContent', db.Text, nullable=False)
-    time_created = db.Column('TimeCreated', db.TIMESTAMP, nullable=False)
-    answer_count = db.Column('AnswerCount', db.Integer, nullable=False, default=0)
-
-    def __repr__(self):
-        return f'<Post {self.id}: {self.title}>'
+class Post:
+    def __init__(self, id, user_id, course_id, title, content, time_created, answer_count):
+        self.id = id
+        self.user_id = user_id
+        self.course_id = course_id
+        self.title = title
+        self.content = content
+        self.time_created = time_created
+        self.answer_count = answer_count

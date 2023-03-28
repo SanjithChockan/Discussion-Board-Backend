@@ -1,16 +1,17 @@
 from flask import Flask
 import mysql.connector
-from main.routes import *
-from main.errors import *
+from main.routes import CRUD
 import aws_credentials as rds
 
 app = Flask(__name__)
+app.register_blueprint(CRUD.bp)
+
 app.config['MYSQL_HOST'] = rds.host
 app.config['MYSQL_USER'] = rds.user
 app.config['MYSQL_PASSWORD'] = rds.password
 app.config['MYSQL_DB'] = rds.db
 
-mydb = mysql.connector.connect(
+db = mysql.connector.connect(
   host=rds.host,
   user=rds.user,
   password=rds.password,
@@ -20,7 +21,7 @@ mydb = mysql.connector.connect(
 
 @app.route('/')
 def index():
-    cur = mydb.cursor()
+    cur = db.cursor()
     cur.execute('''SELECT * FROM Answers''')
     data = cur.fetchall()
     cur.close()
