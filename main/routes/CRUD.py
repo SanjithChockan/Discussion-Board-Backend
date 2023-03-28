@@ -1,7 +1,7 @@
 from flask import jsonify, request, Blueprint
 import sys
-bp = Blueprint('routes', __name__)
-from .models import Post, db
+bp = Blueprint('CRUD', __name__)
+from ..models import Post, db
 from datetime import datetime
 
 # This is supposed to retrieve all the posts from the database
