@@ -1,4 +1,3 @@
-from main import app
 from flask import jsonify
 
 @app.errorhandler(404)
