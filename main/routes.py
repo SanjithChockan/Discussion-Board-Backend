@@ -7,8 +7,13 @@ from datetime import datetime
 # This is supposed to retrieve all the posts from the database
 @bp.route('/getposts', methods=['GET'])
 def get_posts():
-    posts = request.get_data #Query the database 
-    return jsonify([posts.to_dict() for post in posts]), 200
+    ## Add code to select posts from specific course, get courseID from request data
+    # data = request.get_json()
+    cur = db.cursor()
+    query = "SELECT * FROM Posts"
+    cur.execute(query)
+    posts = cur.fetchall()
+    return jsonify(posts), 200
 
 # This is supposed to add a new post to the database
 @bp.route('/addpost', methods=['POST', 'GET'])
