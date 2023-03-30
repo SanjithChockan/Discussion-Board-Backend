@@ -22,7 +22,7 @@ def get_posts():
 def add_post():
     # data = request.get_json()
     cur = db.cursor()
-    post = Post(user_id=3, course_id=2, title='My First Post', content='Hello, world!', time_created=datetime.now(), answer_count=0) #Adding to the database
+    post = Post(user_id=3, course_id=2, title='My First Post', content='When is the exam date?', time_created=datetime.now(), answer_count=0) #Adding to the database
     insert_query = "INSERT INTO posts (user_id, course_id, post_title, post_content, time_created, answer_count) VALUES (%s, %s, %s, %s, %s, %s)"
     insert_values = (post.user_id, post.course_id, post.title, post.content, post.time_created, post.answer_count)
     cur.execute(insert_query, insert_values)
@@ -31,15 +31,16 @@ def add_post():
 
     # Generate automatic answer after post is created
     ai_answer = rule_based.generate(post.content, post.course_id, db)
+    print(ai_answer)
     if ai_answer == "N/A":
         ai_answer = gpt_api.generate("What is O(n)?")
-    answer = Answer(post_id= post_id, user_id=3, content=ai_answer, time_created=datetime.now())
+    answer = Answer(post_id=post_id, user_id=3, content=ai_answer, time_created=datetime.now())
     insert_query = "INSERT INTO answers (post_id, user_id, answer_content, time_created) VALUES (%s, %s, %s, %s)"
     insert_values = (answer.post_id, answer.user_id, answer.content, answer.time_created)
     cur.execute(insert_query, insert_values)
     db.commit()
 
-    return "Success!"#jsonify(post.to_dict()), 201
+    return jsonify(ai_answer), 201
 
 # This is supposed to retrieve a specific post based off of a unique identifier
 @bp.route('/post/<int:id>', methods=['GET'])
