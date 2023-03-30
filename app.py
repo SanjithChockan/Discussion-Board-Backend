@@ -21,7 +21,7 @@ app.register_blueprint(CRUD.bp)
 @app.route('/')
 def index():
     cur = db.cursor()
-    cur.execute('''SELECT * FROM Answers''')
+    cur.execute('''SELECT * FROM answers''')
     data = cur.fetchall()
     cur.close()
     return str(data)
