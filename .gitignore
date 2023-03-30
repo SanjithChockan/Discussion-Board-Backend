@@ -4,6 +4,7 @@
 /main/__pycache__/
 /.DS_Store/
 /main/routes/__pycache__/
-/intelligent_answering/openai_key.py/
+/intelligent_answering/openai_key.py
 /intelligent_answering/.DS_Store/
 /main/.DS_Store/
+/intelligent_answering/__pycache__/
