@@ -1,6 +1,6 @@
 import openai
-from .openai_key import api_key
-openai.api_key = api_key
+#from .openai_key import api_key
+#openai.api_key = api_key
 
 # Testing GPT-3.5 "davinci" model to generate answer to question
 def generate(prompt):
