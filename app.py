@@ -15,8 +15,13 @@ db = mysql.connector.connect(
   database=rds.db
 )
 
-from main.routes import CRUD
-app.register_blueprint(CRUD.bp)
+# Importing CRUD blueprints
+from main.routes.read import *
+from main.routes.create import *
+from main.routes.update_delete import *
+app.register_blueprint(read_bp)
+app.register_blueprint(create_bp)
+app.register_blueprint(update_delete_bp)
 
 @app.route('/')
 def index():
