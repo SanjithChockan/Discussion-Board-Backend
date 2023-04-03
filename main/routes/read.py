@@ -1,30 +1,41 @@
 from flask import jsonify, request, Blueprint
 from ..models import *
-from util import related_post
+from util import related_post_and_search
 from datetime import datetime
 read_bp = Blueprint('read', __name__)
 from app import db
 
+
 # Get all posts from db
 @read_bp.route('/get_all_posts', methods=['GET'])
 def get_all_posts():
-    # data = request.get_json()
     cur = db.cursor()
     query = "SELECT * FROM posts"
     cur.execute(query)
     posts = cur.fetchall()
     return jsonify(posts), 200
 
-# Get related posts:
-@read_bp.route('/get_related_posts', methods=['GET'])
-def get_related_posts():
-    # data = request.get_json()
-    target_post_id = 7
+# Get related post(s):
+@read_bp.route('/get_related_posts/<int:post_id>', methods=['GET'])
+def get_related_posts(post_id):
     cur = db.cursor()
-    related_post_ids = related_post.find_most_related_posts(target_post_id, 1, db)
-    
+    n = 1
+    related_post_ids = related_post_and_search.find_most_related_posts(post_id, n, db)
     # Format query and execute
     query = "SELECT * FROM posts WHERE post_id IN (" + ','.join(map(str, related_post_ids)) + ")"
+    cur.execute(query)
+    posts = cur.fetchall()
+    return jsonify(posts), 200
+
+# Lookup n related posts:
+@read_bp.route('/search/<string:sentence>', methods=['GET'])
+def search(sentence):
+    cur = db.cursor()
+    n = 1
+    lookup_post_ids = related_post_and_search.lookup_related_posts(sentence, n, db)
+    
+    # Format query and execute
+    query = "SELECT * FROM posts WHERE post_id IN (" + ','.join(map(str, lookup_post_ids)) + ")"
     cur.execute(query)
     posts = cur.fetchall()
     return jsonify(posts), 200
