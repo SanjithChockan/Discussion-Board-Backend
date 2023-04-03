@@ -47,3 +47,40 @@ def find_most_related_posts(target_post_id: int, n: int, db: mysql.connector.con
 
     # Return the ids of the top n posts
     return top_n_ids
+
+
+def lookup_related_posts(search_sentence: str, n: int, db: mysql.connector.connection.MySQLConnection) -> List[int]:
+    # Create a TfidfVectorizer to convert text to numerical vectors
+    vectorizer = TfidfVectorizer(stop_words='english')
+
+    # Retrieve all posts from the MySQL database
+    cursor = db.cursor()
+    query = "SELECT post_id, content FROM posts"
+    cursor.execute(query)
+    posts = cursor.fetchall()
+    cursor.close()
+
+    # Create a list of all post contents and a dictionary mapping ids to indices
+    all_posts = [post[1] for post in posts]
+    id_to_index = {post[0]: i for i, post in enumerate(posts)}
+
+    # Create a matrix of all post contents
+    post_matrix = vectorizer.fit_transform(all_posts)
+
+    # Convert search sentence to numerical vector
+    search_vector = vectorizer.transform([search_sentence])
+
+    # Calculate cosine similarity between search sentence and all posts
+    similarities = np.dot(post_matrix, search_vector.T).toarray().flatten()
+
+    # Sort similarities in descending order and get indices of top n posts
+    if n > len(posts):
+        top_n_indices = similarities.argsort()[::-1]
+    else:
+        top_n_indices = similarities.argsort()[::-1][:n]
+
+    # Retrieve the ids of the top n posts
+    top_n_ids = [posts[i][0] for i in top_n_indices]
+
+    # Return the ids of the top n posts
+    return top_n_ids
