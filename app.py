@@ -1,12 +1,13 @@
 from flask import Flask
 import mysql.connector
-import aws_credentials as rds
+#import aws_credentials as rds
+import os
 
 app = Flask(__name__)
-app.config['MYSQL_HOST'] = rds.host
-app.config['MYSQL_USER'] = rds.user
-app.config['MYSQL_PASSWORD'] = rds.password
-app.config['MYSQL_DB'] = rds.db
+app.config['MYSQL_HOST'] = os.environ.get('host')
+app.config['MYSQL_USER'] = os.environ.get('user')
+app.config['MYSQL_PASSWORD'] = os.environ.get('password')
+app.config['MYSQL_DB'] = os.environ.get('db')
 
 db = mysql.connector.connect(
   host=rds.host,
