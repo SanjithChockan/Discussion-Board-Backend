@@ -10,10 +10,10 @@ app.config['MYSQL_PASSWORD'] = os.environ.get('password')
 app.config['MYSQL_DB'] = os.environ.get('db')
 
 db = mysql.connector.connect(
-  host=rds.host,
-  user=rds.user,
-  password=rds.password,
-  database=rds.db
+  host=os.environ.get('host'),
+  user=os.environ.get('user'),
+  password=os.environ.get('password'),
+  database=os.environ.get('db')
 )
 
 # Importing CRUD blueprints
