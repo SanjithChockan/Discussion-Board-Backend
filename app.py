@@ -30,6 +30,3 @@ def index():
     data = cur.fetchall()
     cur.close()
     return str(data)
-
-if __name__ == "__main__":
-  app.run(debug=True)
