@@ -3,3 +3,4 @@
 /intelligent_answering/openai_key.py
 .DS_Store
 __pycache__/
+venv/
