@@ -7,16 +7,16 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-app.config['MYSQL_HOST'] = os.environ.get('host')
-app.config['MYSQL_USER'] = os.environ.get('user')
-app.config['MYSQL_PASSWORD'] = os.environ.get('password')
-app.config['MYSQL_DB'] = os.environ.get('db')
+app.config['MYSQL_HOST'] = os.environ.get('DATABASE_HOST')
+app.config['MYSQL_USER'] = os.environ.get('DATABASE_USER')
+app.config['MYSQL_PASSWORD'] = os.environ.get('DATABASE_PASSWORD')
+app.config['MYSQL_DB'] = os.environ.get('DATABASE_NAME')
 
 db = mysql.connector.connect(
-  host=os.environ.get('host'),
-  user=os.environ.get('user'),
-  password=os.environ.get('password'),
-  database=os.environ.get('db')
+  host=os.environ.get('DATABASE_HOST'),
+  user=os.environ.get('DATABASE_USER'),
+  password=os.environ.get('DATABASE_PASSWORD'),
+  database=os.environ.get('DATABASE_NAME')
 )
 
 # Importing CRUD blueprints
