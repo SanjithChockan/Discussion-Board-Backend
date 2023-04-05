@@ -1,9 +1,12 @@
 from flask import Flask
+from flask_cors import CORS
 import mysql.connector
 #import aws_credentials as rds
 import os
 
 app = Flask(__name__)
+CORS(app)
+
 app.config['MYSQL_HOST'] = os.environ.get('host')
 app.config['MYSQL_USER'] = os.environ.get('user')
 app.config['MYSQL_PASSWORD'] = os.environ.get('password')
