@@ -113,6 +113,13 @@ werkzeug = "==2.2.3"
 widgetsnbextension = "==3.6.0"
 yarl = "==1.8.2"
 zipp = "==3.7.0"
+distlib = "==0.3.6"
+filelock = "==3.10.7"
+flask-cors = "==3.0.10"
+pipenv = "==2023.3.20"
+platformdirs = "==3.2.0"
+virtualenv = "==20.21.0"
+virtualenv-clone = "==0.5.7"
 
 [dev-packages]
 
