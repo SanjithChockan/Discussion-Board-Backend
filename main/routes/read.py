@@ -106,3 +106,15 @@ def get_recent_posts():
     cur.execute(query)
     posts = cur.fetchall()
     return jsonify(posts), 200
+
+
+# Get answers for specific post
+@read_bp.route('/get_answers_for_post', methods=['GET'])
+def get_answers_for_post():
+    data = request.get_json()
+    post_id = data['post_id']
+
+    cur = db.cursor()
+    cur.execute("SELECT * FROM answers WHERE post_id = %s", (post_id,))
+    answers = cur.fetchall()
+    return jsonify(answers), 200
