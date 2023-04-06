@@ -16,7 +16,7 @@ def get_all_posts():
     return jsonify(posts), 200
 
 # Get specific post
-@read_bp.route('get_specific_post', method =['GET'])
+@read_bp.route('/get_specific_post', methods=['GET'])
 def get_specific_post():
     data = request.get_json()
     post_id = data['post_id']
