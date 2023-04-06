@@ -28,7 +28,7 @@ def create_post():
     ai_answer = rule_based.generate(post.content, post.course_id, db)
     print(ai_answer)
     if ai_answer == "N/A":
-        ai_answer = gpt_api.generate("What is O(n)?")
+        ai_answer = gpt_api.generate(post.content)
     
     answer = Answer(post.post_id, 3, content=ai_answer, time_created=datetime.now())
     insert_query = "INSERT INTO answers (post_id, user_id, content, time_created) VALUES (%s, %s, %s, %s)"
