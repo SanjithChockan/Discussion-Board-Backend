@@ -20,7 +20,7 @@ def update_post():
     WHERE post_id = %s;
     """
     cur.execute(update_query, (new_title, new_content, post_id))
-    db.session.commit()
+    db.commit()
 
     # Define the select query
     cur.execute("SELECT * FROM posts WHERE post_id = %s", (post_id,))
@@ -43,7 +43,7 @@ def update_answer(id):
     WHERE answer_id = %s;
     """
     cur.execute(update_query, (new_content, answer_id))
-    db.session.commit()
+    db.commit()
 
     # Define the select query
     cur.execute("SELECT * FROM answer WHERE answer_id = %s", (answer_id,))
