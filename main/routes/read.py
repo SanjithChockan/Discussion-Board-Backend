@@ -116,5 +116,10 @@ def get_answers_for_post():
 
     cur = db.cursor()
     cur.execute("SELECT * FROM answers WHERE post_id = %s", (post_id,))
-    answers = cur.fetchall()
+    sql_answers = cur.fetchall()
+    answers = {}
+    for i, row in enumerate(sql_answers):
+        answer = Answer(row[1], row[2], row[3], row[4])
+        answer.answer_id = row[0]
+        answers[i] = answer.__dict__
     return jsonify(answers), 200
