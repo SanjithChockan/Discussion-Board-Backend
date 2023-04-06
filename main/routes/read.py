@@ -15,11 +15,25 @@ def get_all_posts():
     posts = cur.fetchall()
     return jsonify(posts), 200
 
-# Get related post(s):
-@read_bp.route('/get_related_posts/<int:post_id>', methods=['GET'])
-def get_related_posts(post_id):
+# Get specific post
+@read_bp.route('get_specific_post', method =['GET'])
+def get_specific_post():
+    data = request.get_json()
+    post_id = data['post_id']
+
     cur = db.cursor()
-    n = 1
+    cur.execute("SELECT * FROM posts WHERE post_id = %s", (post_id,))
+    post = cur.fetchone()
+    return jsonify(post), 200
+
+# Get related post(s):
+@read_bp.route('/get_related_posts', methods=['GET'])
+def get_related_posts():
+    data = request.get_json()
+    post_id = data['post_id']
+    n = data['n']
+
+    cur = db.cursor()
     related_post_ids = related_post_and_search.find_most_related_posts(post_id, n, db)
     # Format query and execute
     query = "SELECT * FROM posts WHERE post_id IN (" + ','.join(map(str, related_post_ids)) + ")"
@@ -28,10 +42,13 @@ def get_related_posts(post_id):
     return jsonify(posts), 200
 
 # Lookup n related posts:
-@read_bp.route('/search/<string:sentence>', methods=['GET'])
-def search(sentence):
+@read_bp.route('/search/', methods=['GET'])
+def search():
+    data = request.get_json()
+    sentence = data['sentence']
+    n = data['n']
+
     cur = db.cursor()
-    n = 1
     lookup_post_ids = related_post_and_search.lookup_related_posts(sentence, n, db)
     
     # Format query and execute
@@ -43,9 +60,12 @@ def search(sentence):
 # Get user posts (My posts)
 @read_bp.route('/get_user_posts', methods=['GET'])
 def get_user_posts():
-    # data = request.get_json()
+    # implement current_user.id later when we actually have users
+    data = request.get_json()
+    user_id = data['user_id']
+
     cur = db.cursor()
-    query = "SELECT * FROM posts WHERE user_id = ? ()"
+    query = f'SELECT * FROM posts WHERE user_id = {user_id}'
     cur.execute(query)
     posts = cur.fetchall()
     return jsonify(posts), 200
@@ -63,9 +83,11 @@ def get_recommended_posts():
 # Get professor posts
 @read_bp.route('/get_professor_posts', methods=['GET'])
 def get_professor_posts():
-    # data = request.get_json()
+    data = request.get_json()
+    professor_id = data['professor_id']
+
     cur = db.cursor()
-    query = "SELECT * FROM posts WHERE user_id = ? ()"
+    query = f'SELECT * FROM posts WHERE user_id = {professor_id}'
     cur.execute(query)
     posts = cur.fetchall()
     return jsonify(posts), 200

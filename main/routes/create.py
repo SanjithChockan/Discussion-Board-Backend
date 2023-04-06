@@ -15,7 +15,7 @@ def create_post():
     title = data['title']
     content = data['content']
 
-    post = Post(user_id, course_id, title, content, time_created=datetime.now(), answer_count=0) #Adding to the database
+    post = Post(user_id, course_id, title, content, time_created=datetime.now(), answer_count=1) #Adding to the database
     insert_query = "INSERT INTO posts (user_id, course_id, title, content, time_created, answer_count) VALUES (%s, %s, %s, %s, %s, %s)"
     insert_values = (post.user_id, post.course_id, post.title, post.content, post.time_created, post.answer_count)
     cur = db.cursor()
@@ -29,7 +29,7 @@ def create_post():
     if ai_answer == "N/A":
         ai_answer = gpt_api.generate("What is O(n)?")
     
-    answer = Answer(post_id, user_id, content=ai_answer, time_created=datetime.now())
+    answer = Answer(post_id, 13, content=ai_answer, time_created=datetime.now())
     insert_query = "INSERT INTO answers (post_id, user_id, content, time_created) VALUES (%s, %s, %s, %s)"
     insert_values = (answer.post_id, answer.user_id, answer.content, answer.time_created)
     cur.execute(insert_query, insert_values)
@@ -39,8 +39,18 @@ def create_post():
 
 # Create answer (from user)
 # !!! Need to change to 'POST' only after testing
-@create_bp.route('/create_answer', methods=['POST', 'GET'])
+@create_bp.route('/create_answer', methods=['POST'])
 def create_answer():
-    # data = request.get_json()
+    data = request.get_json()
+    post_id = data['post_id']
+    user_id = data['user_id']
+    content = data['content']
+
+    answer = Answer(post_id=post_id, user_id=user_id, content=content, time_created=datetime.now())
+    insert_query = "INSERT INTO answers (post_id, user_id, content, time_created) VALUES (%s, %s, %s, %s)"
+    insert_values = (answer.post_id, answer.user_id, answer.content, answer.time_created)
+    cur = db.cursor()
+    cur.execute(insert_query, insert_values)
+    db.commit()
 
     return
