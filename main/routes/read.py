@@ -9,8 +9,11 @@ from app import db
 # Get all posts from db
 @read_bp.route('/get_all_posts', methods=['GET'])
 def get_all_posts():
+    data = request.json()
+    n = data['n']
+
     cur = db.cursor()
-    query = "SELECT * FROM posts"
+    query = f"SELECT * FROM posts LIMIT {n};"
     cur.execute(query)
     posts = cur.fetchall()
     return jsonify(posts), 200
@@ -63,9 +66,10 @@ def get_user_posts():
     # implement current_user.id later when we actually have users
     data = request.get_json()
     user_id = data['user_id']
+    n = data['n']
 
     cur = db.cursor()
-    query = f'SELECT * FROM posts WHERE user_id = {user_id}'
+    query = f'SELECT * FROM posts WHERE user_id = {user_id} LIMIT {n}'
     cur.execute(query)
     posts = cur.fetchall()
     return jsonify(posts), 200
@@ -85,9 +89,10 @@ def get_recommended_posts():
 def get_professor_posts():
     data = request.get_json()
     professor_id = data['professor_id']
+    n = data['n']
 
     cur = db.cursor()
-    query = f'SELECT * FROM posts WHERE user_id = {professor_id}'
+    query = f'SELECT * FROM posts WHERE user_id = {professor_id} LIMIT {n}'
     cur.execute(query)
     posts = cur.fetchall()
     return jsonify(posts), 200
