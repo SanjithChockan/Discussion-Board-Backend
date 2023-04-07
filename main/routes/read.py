@@ -9,7 +9,7 @@ from app import db
 # Get all posts from db
 @read_bp.route('/get_all_posts', methods=['GET'])
 def get_all_posts():
-    data = request.json()
+    data = request.get_json()
     n = data['n']
 
     cur = db.cursor()
