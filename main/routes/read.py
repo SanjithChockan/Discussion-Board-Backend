@@ -16,10 +16,11 @@ def get_all_posts():
     query = f"SELECT * FROM posts LIMIT {n};"
     cur.execute(query)
     posts = cur.fetchall()
-    
+
     post_dict = {}
     for i, row in enumerate(posts):
-        post = Post(row[0],row[1], row[2], row[3], row[4], row[5])
+        post = Post(row[1], row[2], row[3], row[4], row[5], row[6])
+        post.post_id = row[0]
         post_dict[i] = post.__dict__
 
     return jsonify(post_dict), 200
