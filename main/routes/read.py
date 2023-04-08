@@ -16,7 +16,13 @@ def get_all_posts():
     query = f"SELECT * FROM posts LIMIT {n};"
     cur.execute(query)
     posts = cur.fetchall()
-    return jsonify(posts), 200
+    
+    post_dict = {}
+    for i, row in enumerate(posts):
+        post = Post(row[0],row[1], row[2], row[3], row[4], row[5])
+        post_dict[i] = post.__dict__
+
+    return jsonify(post_dict), 200
 
 # Get specific post
 @read_bp.route('/get_specific_post', methods=['GET'])
