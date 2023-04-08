@@ -9,8 +9,8 @@ from app import db
 # Get all posts from db
 @read_bp.route('/get_all_posts', methods=['GET'])
 def get_all_posts():
-    data = request.get_json()
-    n = data['n']
+    #data = request.get_json()
+    n = 1000 #data['n']
 
     cur = db.cursor()
     query = f"SELECT * FROM posts LIMIT {n};"
