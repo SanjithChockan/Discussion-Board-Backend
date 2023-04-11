@@ -6,6 +6,7 @@ class Answer:
         self.content = content
         self.time_created = time_created
 
+
 class Post:
     def __init__(self, user_id, course_id, title, content, time_created, answer_count, post_id=-1):
         self.post_id = post_id
