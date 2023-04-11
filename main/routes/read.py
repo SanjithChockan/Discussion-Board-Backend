@@ -33,9 +33,11 @@ def get_specific_post(post_id, n=DEFAULT_N):
 
     cur = db.cursor()
     cur.execute(query)
-    post = cur.fetchone()
+    row = cur.fetchone()
 
-    return jsonify(post), 200
+    post = Post(row[1], row[2], row[3], row[4], row[5], row[6], row[0])
+
+    return jsonify(post.__dict__), 200
 
 
 # Get related post(s):
