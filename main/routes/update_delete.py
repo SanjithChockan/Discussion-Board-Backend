@@ -1,9 +1,8 @@
-import json
 from flask import jsonify, request, Blueprint
 from ..models import *
-from datetime import datetime
 update_delete_bp = Blueprint('update_delete', __name__)
 from app import db
+
 
 # Edit post
 @update_delete_bp.route('/edit_post', methods=['PUT'])
@@ -28,6 +27,7 @@ def update_post():
 
     # Return JSON
     return jsonify(post), 200
+
 
 # Edit answer
 @update_delete_bp.route('/edit_answer', methods=['PUT'])
@@ -65,6 +65,7 @@ def delete_post():
     db.commit()
 
     return "Deleted successfully", 204
+
 
 # Delete answer
 @update_delete_bp.route('/delete_answer', methods=['DELETE'])

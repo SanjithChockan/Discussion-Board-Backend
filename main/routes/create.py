@@ -39,6 +39,7 @@ def create_post():
     # Get post and return
     return jsonify(post.__dict__), 201
 
+
 # Create answer (from user)
 # !!! Need to change to 'POST' only after testing
 @create_bp.route('/create_answer', methods=['POST'])
@@ -49,8 +50,10 @@ def create_answer():
     content = data['content']
 
     answer = Answer(post_id=post_id, user_id=user_id, content=content, time_created=datetime.now())
+
     insert_query = "INSERT INTO answers (post_id, user_id, content, time_created) VALUES (%s, %s, %s, %s)"
     insert_values = (answer.post_id, answer.user_id, answer.content, answer.time_created)
+
     cur = db.cursor()
     cur.execute(insert_query, insert_values)
     answer.answer_id = cur.lastrowid

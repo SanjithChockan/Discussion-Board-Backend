@@ -1,9 +1,9 @@
 from flask import jsonify, request, Blueprint
 from ..models import *
 from util import related_post_and_search
-from datetime import datetime
 read_bp = Blueprint('read', __name__)
 from app import db
+
 DEFAULT_N = 50
 
 
