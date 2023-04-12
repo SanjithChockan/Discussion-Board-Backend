@@ -29,9 +29,9 @@ def get_specific_post(post_id, n=DEFAULT_N):
 
     cur = db.cursor()
     cur.execute(query)
-    posts = format_return(cur.fetchone())
+    posts = format_return(cur.fetchall())
 
-    return jsonify(posts[0].__dict__), 200
+    return jsonify(posts[0]), 200
 
 
 # Get related post(s):
