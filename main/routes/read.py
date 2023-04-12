@@ -73,11 +73,10 @@ def search(query, n=DEFAULT_N):
 
 
 # Get user posts (My posts)
-@read_bp.route("/get_user_posts", methods=["GET"])
-@read_bp.route("/get_user_posts/<int:n>", methods=["GET"])
-def get_user_posts(n=DEFAULT_N):
-    user_id = 3  # implement current_user.id later when we actually have users
-
+@read_bp.route("/get_user_posts/<int:user_id>", methods=["GET"])
+@read_bp.route("/get_user_posts/<int:user_id>/<int:n>", methods=["GET"])
+def get_user_posts(user_id, n=DEFAULT_N):
+    # implement current_user.id later when we actually have users
     query = f"SELECT * FROM posts WHERE user_id = {user_id} LIMIT {n}"
 
     cur = db.cursor()
@@ -89,8 +88,9 @@ def get_user_posts(n=DEFAULT_N):
 
 # Get recommended posts
 @read_bp.route("/get_recommended_posts", methods=["GET"])
-def get_recommended_posts():
-    query = "SELECT * FROM posts WHERE user_id = ? ()"
+@read_bp.route("/get_recommended_posts/<int:n>", methods=["GET"])
+def get_recommended_posts(n=DEFAULT_N):
+    query = f"SELECT * FROM posts LIMIT {n}"
 
     cur = db.cursor()
     cur.execute(query)
@@ -114,12 +114,14 @@ def get_professor_posts(professor_id, n=DEFAULT_N):
 
 # Get recent posts
 @read_bp.route("/get_recent_posts", methods=["GET"])
-def get_recent_posts():
-    # data = request.get_json()
+@read_bp.route("/get_recent_posts/<int:n>", methods=["GET"])
+def get_recent_posts(n=DEFAULT_N):
+    query = f"SELECT * FROM posts LIMIT {n}"
+
     cur = db.cursor()
-    query = "SELECT * FROM posts WHERE user_id = ? ()"
     cur.execute(query)
     posts = format_return(cur.fetchall())
+
     return jsonify(posts), 200
 
 
@@ -141,6 +143,7 @@ def get_answers_for_post(post_id, n=DEFAULT_N):
     return jsonify(answers), 200
 
 
+# Turn posts into the Post class and dictize, then add to list
 def format_return(sql_posts):
     posts = []
     for row in sql_posts:
