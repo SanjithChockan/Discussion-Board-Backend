@@ -9,16 +9,22 @@ from app import db
 DEFAULT_N = 50
 
 
+# Helper
+def _process_query(query):
+    cur = db.cursor()
+    cur.execute(query)
+    posts = format_post_return(cur.fetchall(), cur)
+
+    return posts
+
+
 # Get all posts from db
 @read_posts_bp.route("/get_all_posts", methods=["GET"])
 @read_posts_bp.route("/get_all_posts/<int:n>", methods=["GET"])
 def get_all_posts(n=DEFAULT_N):
     query = f"SELECT * FROM posts LIMIT {n};"
 
-    cur = db.cursor()
-    cur.execute(query)
-    posts = format_post_return(cur.fetchall(), cur)
-
+    posts = _process_query(query)
     return jsonify(posts), 200
 
 
@@ -28,11 +34,8 @@ def get_all_posts(n=DEFAULT_N):
 def get_specific_post(post_id):
     query = f"SELECT * FROM posts WHERE post_id = {post_id}"
 
-    cur = db.cursor()
-    cur.execute(query)
-    posts = format_post_return(cur.fetchall(), cur)
-
-    return jsonify(posts[0]), 200
+    posts = _process_query(query)
+    return jsonify(posts), 200
 
 
 # Get related post(s):
@@ -50,9 +53,7 @@ def get_related_posts(post_id, n=DEFAULT_N):
             + f") LIMIT {n}"
         )
 
-        cur = db.cursor()
-        cur.execute(query)
-        posts = format_post_return(cur.fetchall(), cur)
+        posts = _process_query(query)
 
     return jsonify(posts), 200
 
@@ -72,9 +73,7 @@ def search(query, n=DEFAULT_N):
             + ")"
         )
 
-        cur = db.cursor()
-        cur.execute(query)
-        posts = format_post_return(cur.fetchall(), cur)
+        posts = _process_query(query)
 
     return jsonify(posts), 200
 
@@ -86,10 +85,7 @@ def get_user_posts(user_id, n=DEFAULT_N):
     # implement current_user.id later when we actually have users
     query = f"SELECT * FROM posts WHERE user_id = {user_id} LIMIT {n}"
 
-    cur = db.cursor()
-    cur.execute(query)
-    posts = format_post_return(cur.fetchall(), cur)
-
+    posts = _process_query(query)
     return jsonify(posts), 200
 
 
@@ -99,10 +95,7 @@ def get_user_posts(user_id, n=DEFAULT_N):
 def get_recommended_posts(n=DEFAULT_N):
     query = f"SELECT * FROM posts LIMIT {n}"
 
-    cur = db.cursor()
-    cur.execute(query)
-    posts = format_post_return(cur.fetchall(), cur)
-
+    posts = _process_query(query)
     return jsonify(posts), 200
 
 
@@ -112,10 +105,7 @@ def get_recommended_posts(n=DEFAULT_N):
 def get_professor_posts(professor_id, n=DEFAULT_N):
     query = f"SELECT * FROM posts WHERE user_id = {professor_id} LIMIT {n}"
 
-    cur = db.cursor()
-    cur.execute(query)
-    posts = format_post_return(cur.fetchall(), cur)
-
+    posts = _process_query(query)
     return jsonify(posts), 200
 
 
@@ -125,8 +115,5 @@ def get_professor_posts(professor_id, n=DEFAULT_N):
 def get_recent_posts(n=DEFAULT_N):
     query = f"SELECT * FROM posts LIMIT {n}"
 
-    cur = db.cursor()
-    cur.execute(query)
-    posts = format_post_return(cur.fetchall(), cur)
-
+    posts = _process_query(query)
     return jsonify(posts), 200
