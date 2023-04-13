@@ -35,7 +35,7 @@ def get_specific_post(post_id):
     query = f"SELECT * FROM posts WHERE post_id = {post_id}"
 
     posts = _process_query(query)
-    return jsonify(posts), 200
+    return jsonify(posts[0]), 200
 
 
 # Get related post(s):
