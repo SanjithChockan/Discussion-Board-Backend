@@ -18,6 +18,8 @@ class Post:
         self.post_content = content
         self.time_created = time_created
         self.answer_count = answer_count
+        self.course = None
+        self.user = None
 
 
 class Course:
