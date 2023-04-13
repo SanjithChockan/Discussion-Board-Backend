@@ -40,7 +40,7 @@ def get_specific_post(post_id):
 @read_posts_bp.route("/get_related_posts/<int:post_id>/<int:n>", methods=["GET"])
 def get_related_posts(post_id, n=DEFAULT_N):
     related_post_ids = related_post_and_search.find_most_related_posts(post_id, n, db)
-    posts = {}
+    posts = []
     if not related_post_ids:
         pass
     else:
@@ -57,12 +57,12 @@ def get_related_posts(post_id, n=DEFAULT_N):
     return jsonify(posts), 200
 
 
-# Lookup n related posts:
+# Search:
 @read_posts_bp.route("/search/<string:query>", methods=["GET"])
 @read_posts_bp.route("/search/<string:query>/<int:n>", methods=["GET"])
 def search(query, n=DEFAULT_N):
     lookup_post_ids = related_post_and_search.lookup_related_posts(query, n, db)
-    posts = {}
+    posts = []
     if not lookup_post_ids:
         pass
     else:
