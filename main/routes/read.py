@@ -39,16 +39,19 @@ def get_specific_post(post_id, n=DEFAULT_N):
 @read_bp.route("/get_related_posts/<int:post_id>/<int:n>", methods=["GET"])
 def get_related_posts(post_id, n=DEFAULT_N):
     related_post_ids = related_post_and_search.find_most_related_posts(post_id, n, db)
+    posts = {}
+    if not related_post_ids:
+        pass
+    else:
+        query = (
+            "SELECT * FROM posts WHERE post_id IN ("
+            + ",".join(map(str, related_post_ids))
+            + f") LIMIT {n}"
+        )
 
-    query = (
-        "SELECT * FROM posts WHERE post_id IN ("
-        + ",".join(map(str, related_post_ids))
-        + f") LIMIT {n}"
-    )
-
-    cur = db.cursor()
-    cur.execute(query)
-    posts = format_return(cur.fetchall())
+        cur = db.cursor()
+        cur.execute(query)
+        posts = format_return(cur.fetchall())
 
     return jsonify(posts), 200
 
@@ -58,16 +61,19 @@ def get_related_posts(post_id, n=DEFAULT_N):
 @read_bp.route("/search/<string:query>/<int:n>", methods=["GET"])
 def search(query, n=DEFAULT_N):
     lookup_post_ids = related_post_and_search.lookup_related_posts(query, n, db)
+    posts = {}
+    if not lookup_post_ids:
+        pass
+    else:
+        query = (
+            "SELECT * FROM posts WHERE post_id IN ("
+            + ",".join(map(str, lookup_post_ids))
+            + ")"
+        )
 
-    query = (
-        "SELECT * FROM posts WHERE post_id IN ("
-        + ",".join(map(str, lookup_post_ids))
-        + ")"
-    )
-
-    cur = db.cursor()
-    cur.execute(query)
-    posts = format_return(cur.fetchall())
+        cur = db.cursor()
+        cur.execute(query)
+        posts = format_return(cur.fetchall())
 
     return jsonify(posts), 200
 

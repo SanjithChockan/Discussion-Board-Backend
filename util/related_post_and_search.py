@@ -3,9 +3,14 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import mysql.connector
 from typing import List
 
-def find_most_related_posts(target_post_id: int, n: int, db: mysql.connector.connection.MySQLConnection) -> List[int]:
+threshold = 0.3
+
+
+def find_most_related_posts(
+    target_post_id: int, n: int, db: mysql.connector.connection.MySQLConnection
+) -> List[int]:
     # Create a TfidfVectorizer to convert text to numerical vectors
-    vectorizer = TfidfVectorizer(stop_words='english')
+    vectorizer = TfidfVectorizer(stop_words="english")
 
     # Retrieve the content and course ID of the target post from the MySQL database
     cursor = db.cursor()
@@ -43,15 +48,17 @@ def find_most_related_posts(target_post_id: int, n: int, db: mysql.connector.con
         top_n_indices = similarities.argsort()[::-1][:n]
 
     # Retrieve the ids of the top n posts
-    top_n_ids = [posts[i][0] for i in top_n_indices]
+    top_n_ids = [posts[i][0] for i in top_n_indices if similarities[i] > threshold]
 
     # Return the ids of the top n posts
     return top_n_ids
 
 
-def lookup_related_posts(search_sentence: str, n: int, db: mysql.connector.connection.MySQLConnection) -> List[int]:
+def lookup_related_posts(
+    search_sentence: str, n: int, db: mysql.connector.connection.MySQLConnection
+) -> List[int]:
     # Create a TfidfVectorizer to convert text to numerical vectors
-    vectorizer = TfidfVectorizer(stop_words='english')
+    vectorizer = TfidfVectorizer(stop_words=None)
 
     # Retrieve all posts from the MySQL database
     cursor = db.cursor()
@@ -80,7 +87,7 @@ def lookup_related_posts(search_sentence: str, n: int, db: mysql.connector.conne
         top_n_indices = similarities.argsort()[::-1][:n]
 
     # Retrieve the ids of the top n posts
-    top_n_ids = [posts[i][0] for i in top_n_indices]
+    top_n_ids = [posts[i][0] for i in top_n_indices if similarities[i] > threshold]
 
     # Return the ids of the top n posts
     return top_n_ids
