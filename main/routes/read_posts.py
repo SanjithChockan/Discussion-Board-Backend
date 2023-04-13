@@ -17,7 +17,7 @@ def get_all_posts(n=DEFAULT_N):
 
     cur = db.cursor()
     cur.execute(query)
-    posts = format_post_return(cur.fetchall())
+    posts = format_post_return(cur.fetchall(), cur)
 
     return jsonify(posts), 200
 
@@ -30,7 +30,7 @@ def get_specific_post(post_id):
 
     cur = db.cursor()
     cur.execute(query)
-    posts = format_post_return(cur.fetchall())
+    posts = format_post_return(cur.fetchall(), cur)
 
     return jsonify(posts[0]), 200
 
@@ -52,7 +52,7 @@ def get_related_posts(post_id, n=DEFAULT_N):
 
         cur = db.cursor()
         cur.execute(query)
-        posts = format_post_return(cur.fetchall())
+        posts = format_post_return(cur.fetchall(), cur)
 
     return jsonify(posts), 200
 
@@ -74,7 +74,7 @@ def search(query, n=DEFAULT_N):
 
         cur = db.cursor()
         cur.execute(query)
-        posts = format_post_return(cur.fetchall())
+        posts = format_post_return(cur.fetchall(), cur)
 
     return jsonify(posts), 200
 
@@ -88,7 +88,7 @@ def get_user_posts(user_id, n=DEFAULT_N):
 
     cur = db.cursor()
     cur.execute(query)
-    posts = format_post_return(cur.fetchall())
+    posts = format_post_return(cur.fetchall(), cur)
 
     return jsonify(posts), 200
 
@@ -101,7 +101,7 @@ def get_recommended_posts(n=DEFAULT_N):
 
     cur = db.cursor()
     cur.execute(query)
-    posts = format_post_return(cur.fetchall())
+    posts = format_post_return(cur.fetchall(), cur)
 
     return jsonify(posts), 200
 
@@ -114,7 +114,7 @@ def get_professor_posts(professor_id, n=DEFAULT_N):
 
     cur = db.cursor()
     cur.execute(query)
-    posts = format_post_return(cur.fetchall())
+    posts = format_post_return(cur.fetchall(), cur)
 
     return jsonify(posts), 200
 
@@ -127,6 +127,6 @@ def get_recent_posts(n=DEFAULT_N):
 
     cur = db.cursor()
     cur.execute(query)
-    posts = format_post_return(cur.fetchall())
+    posts = format_post_return(cur.fetchall(), cur)
 
     return jsonify(posts), 200
