@@ -4,37 +4,10 @@ from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from typing import List
-import os
+from main.models import *
 
-threshold = 0.1
+threshold = .1
 scale = 5
-
-# Define your database URI
-host = os.environ.get("DATABASE_HOST")
-username = os.environ.get("DATABASE_USER")
-pw = os.environ.get("DATABASE_PASSWORD")
-db_name = os.environ.get("DATABASE_NAME")
-
-db_uri = f"mysql+pymysql://{username}:{pw}@{host}:3306/{db_name}"
-
-# Create the SQLAlchemy engine
-engine = create_engine(db_uri)
-
-# Define the Post class to represent the posts table
-Base = declarative_base()
-
-
-class Post(Base):
-    __tablename__ = "posts"
-
-    post_id = Column(Integer, primary_key=True)
-    post_title = Column(String)
-    post_content = Column(String)
-    course_id = Column(Integer)
-
-
-# Create a session factory and a session
-Session = sessionmaker(bind=engine)
 
 
 def cosine_similarity(posts, choice, text):
@@ -61,9 +34,8 @@ def cosine_similarity(posts, choice, text):
 def find_most_related_posts(target_post_id: int, n: int) -> List[int]:
     # Create a TfidfVectorizer to convert text to numerical vectors
     vectorizer = TfidfVectorizer(stop_words="english")
-    session = Session()
     # Retrieve the content and course ID of the target post from the database
-    target_post = session.query(Post).filter(Post.post_id == target_post_id).one()
+    target_post = Posts.query.get(target_post_id)
     target_post_title, target_post_content, target_post_course_id = (
         target_post.post_title,
         target_post.post_content,
@@ -71,12 +43,7 @@ def find_most_related_posts(target_post_id: int, n: int) -> List[int]:
     )
 
     # Retrieve all posts in the same course as the target post from the database
-    posts = (
-        session.query(Post)
-        .filter(Post.course_id == target_post_course_id, Post.post_id != target_post_id)
-        .limit(n)
-        .all()
-    )
+    posts = Posts.query.filter_by(course_id=target_post_course_id).all()
 
     content_scores = cosine_similarity(posts, "content", target_post_content)
     title_scores = cosine_similarity(posts, "title", target_post_title)
@@ -108,8 +75,7 @@ def find_most_related_posts(target_post_id: int, n: int) -> List[int]:
 
 def lookup_related_posts(search_sentence: str, n: int) -> List[int]:
     # Retrieve all posts from the MySQL database
-    session = Session()
-    posts = session.query(Post).all()
+    posts = Posts.query.all()
 
     content_scores = cosine_similarity(posts, "content", search_sentence)
     title_scores = cosine_similarity(posts, "title", search_sentence)
