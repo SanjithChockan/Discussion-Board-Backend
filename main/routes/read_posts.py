@@ -3,7 +3,6 @@ from ..models import *
 from util import related_post_and_search
 
 read_posts_bp = Blueprint("read_posts", __name__)
-from app import db
 
 DEFAULT_N = 50
 
