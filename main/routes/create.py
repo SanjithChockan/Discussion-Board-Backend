@@ -23,7 +23,7 @@ def create_post():
         post_title=title,
         post_content=content,
         time_created=datetime.now(),
-        answer_count=1
+        answer_count=1,
     )
     db.session.add(post)
     db.session.commit()
@@ -34,7 +34,12 @@ def create_post():
     if ai_answer == "N/A":
         ai_answer = gpt_api.generate(post.post_content)
 
-    answer = Answer(post_id=post.post_id, user_id=3, answer_content=ai_answer, time_created=datetime.now())
+    answer = Answer(
+        post_id=post.post_id,
+        user_id=3,
+        answer_content=ai_answer,
+        time_created=datetime.now(),
+    )
     db.session.add(answer)
     db.session.commit()
 

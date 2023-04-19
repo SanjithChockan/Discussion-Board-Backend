@@ -1,9 +1,9 @@
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from typing import List
-from IDB-BE.main.models import *
+from main.models import *
 
-threshold = .1
+threshold = 0.1
 scale = 5
 
 

@@ -1,81 +1,70 @@
 from flask import jsonify, request, Blueprint
 from ..models import *
-update_delete_bp = Blueprint('update_delete', __name__)
-from app import db
+
+update_delete_bp = Blueprint("update_delete", __name__)
 
 
 # Edit post
-@update_delete_bp.route('/edit_post', methods=['PUT'])
+@update_delete_bp.route("/edit_post", methods=["PUT"])
 def update_post():
     data = request.get_json()
-    post_id = data['post_id']
-    new_title = data['title']
-    new_content = data['content']
+    post_id = data["post_id"]
+    new_title = data["title"]
+    new_content = data["content"]
 
-    cur = db.cursor()
-    update_query = """
-    UPDATE posts
-    SET title = %s, content = %s
-    WHERE post_id = %s;
-    """
-    cur.execute(update_query, (new_title, new_content, post_id))
-    db.commit()
-
-    # Define the select query
-    cur.execute("SELECT * FROM posts WHERE post_id = %s", (post_id,))
-    post = cur.fetchone()
+    # Fetch post and update
+    post = Post.query.filter_by(post_id=post_id).first()
+    post.post_title = new_title
+    post.post_content = new_content
+    db.session.commit()
 
     # Return JSON
-    return jsonify(post), 200
+    return jsonify(post.serialize()), 200
 
 
 # Edit answer
-@update_delete_bp.route('/edit_answer', methods=['PUT'])
+@update_delete_bp.route("/edit_answer", methods=["PUT"])
 def update_answer(id):
     data = request.get_json()
-    answer_id = data['answer_id']
-    new_content = data['content']
+    answer_id = data["answer_id"]
+    new_content = data["content"]
 
-    cur = db.cursor()
-    update_query = """
-    UPDATE answers
-    SET content = %s
-    WHERE answer_id = %s;
-    """
-    cur.execute(update_query, (new_content, answer_id))
-    db.commit()
-
-    # Define the select query
-    cur.execute("SELECT * FROM answer WHERE answer_id = %s", (answer_id,))
-    answer = cur.fetchone()
+    # Fetch answer and update
+    answer = Answer.query.filter_by(answer_id=answer_id).first()
+    answer.answer_content = new_content
+    db.session.commit()
 
     # Return JSON
-    return jsonify(answer), 200
+    return jsonify(answer.serialize()), 200
 
 
 # Delete post
-@update_delete_bp.route('/delete_post', methods=['DELETE'])
+@update_delete_bp.route("/delete_post", methods=["DELETE"])
 def delete_post():
     data = request.get_json()
-    post_id = data['post_id']
-    
-    cur = db.cursor()
-    delete_query = "DELETE FROM posts WHERE post_id = %s"
-    cur.execute(delete_query, (post_id,))
-    db.commit()
+    post_id = data["post_id"]
 
-    return "Deleted successfully", 204
+    post = Post.query.filter_by(post_id=post_id).first()
+    if post is None:
+        return jsonify({"error": "Post not found."}), 404
+
+    db.session.delete(post)
+    db.session.commit()
+
+    return "Post deleted successfully", 204
 
 
 # Delete answer
-@update_delete_bp.route('/delete_answer', methods=['DELETE'])
+@update_delete_bp.route("/delete_answer", methods=["DELETE"])
 def delete_answer():
     data = request.get_json()
-    answer_id = data['answer_id']
-    
-    cur = db.cursor()
-    delete_query = "DELETE FROM answers WHERE answer_id = %s"
-    cur.execute(delete_query, (answer_id,))
-    db.commit()
-    
-    return "Deleted successfully", 204
+    answer_id = data["answer_id"]
+
+    answer = Answer.query.filter_by(answer_id=answer_id).first()
+    if answer is None:
+        return jsonify({"error": "Answer not found."}), 404
+
+    db.session.delete(answer)
+    db.session.commit()
+
+    return "Answer deleted successfully", 204
