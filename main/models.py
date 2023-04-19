@@ -11,6 +11,15 @@ class Answers(db.Model):
     post = db.relationship("Posts", backref=db.backref("answers", lazy=True))
     user = db.relationship("Users", backref=db.backref("answers", lazy=True))
 
+    def serialize(self):
+        return {
+            "id": self.answer_id,
+            "post_id": self.post_id,
+            "answer_content": self.answer_content,
+            "user_id": self.user_id,
+            "created_at": self.time_created
+        }
+
 
 class Posts(db.Model):
     post_id = db.Column(db.Integer, primary_key=True)
@@ -29,7 +38,7 @@ class Posts(db.Model):
             "post_id": self.post_id,
             "user_id": self.user_id,
             "course_id": self.course_id,
-            "post_title": self.post_title,
+            "title": self.post_title,
             "post_content": self.post_content,
             "time_created": self.time_created.isoformat(),
             "answer_count": self.answer_count,
@@ -50,6 +59,13 @@ class Courses(db.Model):
     course_id = db.Column(db.Integer, primary_key=True)
     course_number = db.Column(db.String(50), nullable=False, unique=True)
     course_title = db.Column(db.String(255), nullable=False)
+
+    def serialize(self):
+        return {
+            "course_id": self.course_id,
+            "course_number": self.course_number,
+            "course_title": self.course_title,
+        }
 
 
 class Users(db.Model):
