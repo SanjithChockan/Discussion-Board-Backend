@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from typing import List
-from main.models import *
+from IDB-BE.main.models import *
 
 threshold = .1
 scale = 5
@@ -32,7 +32,7 @@ def find_most_related_posts(target_post_id: int, n: int) -> List[int]:
     # Create a TfidfVectorizer to convert text to numerical vectors
     vectorizer = TfidfVectorizer(stop_words="english")
     # Retrieve the content and course ID of the target post from the database
-    target_post = Posts.query.get(target_post_id)
+    target_post = Post.query.get(target_post_id)
     target_post_title, target_post_content, target_post_course_id = (
         target_post.post_title,
         target_post.post_content,
@@ -40,7 +40,7 @@ def find_most_related_posts(target_post_id: int, n: int) -> List[int]:
     )
 
     # Retrieve all posts in the same course as the target post from the database
-    posts = Posts.query.filter_by(course_id=target_post_course_id).all()
+    posts = Post.query.filter_by(course_id=target_post_course_id).all()
 
     content_scores = cosine_similarity(posts, "content", target_post_content)
     title_scores = cosine_similarity(posts, "title", target_post_title)
@@ -72,7 +72,7 @@ def find_most_related_posts(target_post_id: int, n: int) -> List[int]:
 
 def lookup_related_posts(search_sentence: str, n: int) -> List[int]:
     # Retrieve all posts from the MySQL database
-    posts = Posts.query.all()
+    posts = Post.query.all()
 
     content_scores = cosine_similarity(posts, "content", search_sentence)
     title_scores = cosine_similarity(posts, "title", search_sentence)

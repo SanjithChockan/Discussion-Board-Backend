@@ -4,7 +4,6 @@ from util import rule_based, gpt_api
 from datetime import datetime
 
 create_bp = Blueprint("create", __name__)
-from app import db
 
 
 # Create post and generate AI answer
@@ -14,46 +13,33 @@ def create_post():
     data = request.get_json()
     user_id = data["user_id"]
     course_id = data["course_id"]
-    title = data["title"]
-    content = data["content"]
+    title = data["post_title"]
+    content = data["post_content"]
 
     # Insert post
-    post = Posts(
-        user_id, course_id, title, content, time_created=datetime.now(), answer_count=1
-    )  # Adding to the database
-    insert_query = "INSERT INTO posts (user_id, course_id, title, content, time_created, answer_count) VALUES (%s, %s, %s, %s, %s, %s)"
-    insert_values = (
-        post.user_id,
-        post.course_id,
-        post.title,
-        post.content,
-        post.time_created,
-        post.answer_count,
+    post = Post(
+        user_id=user_id,
+        course_id=course_id,
+        post_title=title,
+        post_content=content,
+        time_created=datetime.now(),
+        answer_count=1
     )
-    cur = db.cursor()
-    cur.execute(insert_query, insert_values)
-    post.post_id = cur.lastrowid
-    db.commit()
+    db.session.add(post)
+    db.session.commit()
 
     # Generate automatic answer after post is created
-    ai_answer = rule_based.generate(post.content, post.course_id, db)
+    ai_answer = rule_based.generate(post.post_content, post.course_id, db)
     print(ai_answer)
     if ai_answer == "N/A":
-        ai_answer = gpt_api.generate(post.content)
+        ai_answer = gpt_api.generate(post.post_content)
 
-    answer = Answers(post.post_id, 3, content=ai_answer, time_created=datetime.now())
-    insert_query = "INSERT INTO answers (post_id, user_id, content, time_created) VALUES (%s, %s, %s, %s)"
-    insert_values = (
-        answer.post_id,
-        answer.user_id,
-        answer.content,
-        answer.time_created,
-    )
-    cur.execute(insert_query, insert_values)
-    db.commit()
+    answer = Answer(post_id=post.post_id, user_id=3, answer_content=ai_answer, time_created=datetime.now())
+    db.session.add(answer)
+    db.session.commit()
 
     # Get post and return
-    return jsonify(post.__dict__), 201
+    return jsonify(post.serialize()), 201
 
 
 # Create answer (from user)
@@ -63,23 +49,12 @@ def create_answer():
     data = request.get_json()
     post_id = data["post_id"]
     user_id = data["user_id"]
-    content = data["content"]
+    content = data["answer_content"]
 
-    answer = Answers(
+    answer = Answer(
         post_id=post_id, user_id=user_id, content=content, time_created=datetime.now()
     )
+    db.session.add(answer)
+    db.session.commit()
 
-    insert_query = "INSERT INTO answers (post_id, user_id, content, time_created) VALUES (%s, %s, %s, %s)"
-    insert_values = (
-        answer.post_id,
-        answer.user_id,
-        answer.content,
-        answer.time_created,
-    )
-
-    cur = db.cursor()
-    cur.execute(insert_query, insert_values)
-    answer.answer_id = cur.lastrowid
-    db.commit()
-
-    return jsonify(answer.__dict__)
+    return jsonify(answer.serialize()), 201

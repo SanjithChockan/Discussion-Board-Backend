@@ -1,19 +1,21 @@
 from app import db
 
 
-class Answers(db.Model):
+class Answer(db.Model):
+    __tablename__ = "answers"
+
     answer_id = db.Column(db.Integer, primary_key=True)
     post_id = db.Column(db.Integer, db.ForeignKey("posts.post_id"))
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
     answer_content = db.Column(db.Text, nullable=False)
     time_created = db.Column(db.DateTime, nullable=False)
 
-    post = db.relationship("Posts", backref=db.backref("answers", lazy=True))
-    user = db.relationship("Users", backref=db.backref("answers", lazy=True))
+    post = db.relationship("Post", backref=db.backref("answers", lazy=True))
+    user = db.relationship("User", backref=db.backref("answers", lazy=True))
 
     def serialize(self):
         return {
-            "id": self.answer_id,
+            "answer_id": self.answer_id,
             "post_id": self.post_id,
             "answer_content": self.answer_content,
             "user_id": self.user_id,
@@ -21,7 +23,9 @@ class Answers(db.Model):
         }
 
 
-class Posts(db.Model):
+class Post(db.Model):
+    __tablename__ = "posts"
+
     post_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
     course_id = db.Column(db.Integer, db.ForeignKey("courses.course_id"))
@@ -30,8 +34,8 @@ class Posts(db.Model):
     time_created = db.Column(db.DateTime, nullable=False)
     answer_count = db.Column(db.Integer, nullable=False)
 
-    course = db.relationship("Courses", backref=db.backref("posts", lazy=True))
-    user = db.relationship("Users", backref=db.backref("posts", lazy=True))
+    course = db.relationship("Course", backref=db.backref("posts", lazy=True))
+    user = db.relationship("User", backref=db.backref("posts", lazy=True))
 
     def serialize(self):
         return {
@@ -55,7 +59,9 @@ class Posts(db.Model):
         }
 
 
-class Courses(db.Model):
+class Course(db.Model):
+    __tablename__ = "courses"
+
     course_id = db.Column(db.Integer, primary_key=True)
     course_number = db.Column(db.String(50), nullable=False, unique=True)
     course_title = db.Column(db.String(255), nullable=False)
@@ -68,8 +74,19 @@ class Courses(db.Model):
         }
 
 
-class Users(db.Model):
+class User(db.Model):
+    __tablename__ = "users"
+
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(100), nullable=False, unique=True)
+
+
+class Rules(db.Model):
+    __tablename__ = 'rules'
+
+    rule_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    course_id = db.Column(db.Integer, nullable=False)
+    pattern = db.Column(db.String(255), nullable=False)
+    rule = db.Column(db.String(255), nullable=False)
