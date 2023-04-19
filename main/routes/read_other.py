@@ -1,7 +1,6 @@
 from flask import jsonify, request, Blueprint
 from ..models import *
 from util import related_post_and_search
-from util.format import *
 
 read_other_bp = Blueprint("read_other", __name__)
 from app import db
@@ -21,7 +20,7 @@ def get_answers_for_post(post_id, n=DEFAULT_N):
 
     answers = []
     for row in sql_answers:
-        answer = Answer(row[1], row[2], row[3], row[4], row[0])
+        answer = Answers(row[1], row[2], row[3], row[4], row[0])
         answers.append(answer.__dict__)
 
     return jsonify(answers), 200

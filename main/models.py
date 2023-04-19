@@ -1,37 +1,58 @@
-class Answer:
-    def __init__(self, post_id, user_id, content, time_created, answer_id=-1):
-        self.answer_id = answer_id
-        self.post_id = post_id
-        self.user_id = user_id
-        self.answer_content = content
-        self.time_created = time_created
+from app import db
 
 
-class Post:
-    def __init__(
-        self, user_id, course_id, title, content, time_created, answer_count, post_id=-1
-    ):
-        self.post_id = post_id
-        self.user_id = user_id
-        self.course_id = course_id
-        self.post_title = title
-        self.post_content = content
-        self.time_created = time_created
-        self.answer_count = answer_count
-        self.course = None
-        self.user = None
+class Answers(db.Model):
+    answer_id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey("posts.post_id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
+    answer_content = db.Column(db.Text, nullable=False)
+    time_created = db.Column(db.DateTime, nullable=False)
+
+    post = db.relationship("Posts", backref=db.backref("answers", lazy=True))
+    user = db.relationship("Users", backref=db.backref("answers", lazy=True))
 
 
-class Course:
-    def __init__(self, course_number, title, course_id=-1):
-        self.course_number = course_number
-        self.course_title = title
-        self.course_id = course_id
+class Posts(db.Model):
+    post_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
+    course_id = db.Column(db.Integer, db.ForeignKey("courses.course_id"))
+    post_title = db.Column(db.String(255), nullable=False)
+    post_content = db.Column(db.Text, nullable=False)
+    time_created = db.Column(db.DateTime, nullable=False)
+    answer_count = db.Column(db.Integer, nullable=False)
+
+    course = db.relationship("Courses", backref=db.backref("posts", lazy=True))
+    user = db.relationship("Users", backref=db.backref("posts", lazy=True))
+
+    def serialize(self):
+        return {
+            "post_id": self.post_id,
+            "user_id": self.user_id,
+            "course_id": self.course_id,
+            "post_title": self.post_title,
+            "post_content": self.post_content,
+            "time_created": self.time_created.isoformat(),
+            "answer_count": self.answer_count,
+            "course": {
+                "course_id": self.course.course_id,
+                "course_number": self.course.course_number,
+                "course_title": self.course.course_title,
+            },
+            "user": {
+                "user_id": self.user.user_id,
+                "username": self.user.username,
+                "email": self.user.email,
+            },
+        }
 
 
-class User:
-    def __init__(self, username, email, user_id=-1):
-        self.username = username
-        self.email = email
-        # self.password = password
-        self.user_id = user_id
+class Courses(db.Model):
+    course_id = db.Column(db.Integer, primary_key=True)
+    course_number = db.Column(db.String(50), nullable=False, unique=True)
+    course_title = db.Column(db.String(255), nullable=False)
+
+
+class Users(db.Model):
+    user_id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), nullable=False, unique=True)
+    email = db.Column(db.String(100), nullable=False, unique=True)

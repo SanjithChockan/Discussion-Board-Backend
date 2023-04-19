@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
-import mysql.connector
+from flask_sqlalchemy import SQLAlchemy
 
 # import aws_credentials as rds
 import os
@@ -8,17 +8,18 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-app.config["MYSQL_HOST"] = os.environ.get("DATABASE_HOST")
-app.config["MYSQL_USER"] = os.environ.get("DATABASE_USER")
-app.config["MYSQL_PASSWORD"] = os.environ.get("DATABASE_PASSWORD")
-app.config["MYSQL_DB"] = os.environ.get("DATABASE_NAME")
+# set sql alchemy database uri like this 'mysql+pymysql://username:password@host/database'
 
-db = mysql.connector.connect(
-    host=os.environ.get("DATABASE_HOST"),
-    user=os.environ.get("DATABASE_USER"),
-    password=os.environ.get("DATABASE_PASSWORD"),
-    database=os.environ.get("DATABASE_NAME"),
-)
+host = os.environ.get("DATABASE_HOST")
+username = os.environ.get("DATABASE_USER")
+pw = os.environ.get("DATABASE_PASSWORD")
+db_name = os.environ.get("DATABASE_NAME")
+
+app.config[
+    "SQLALCHEMY_DATABASE_URI"
+] = f"mysql+pymysql://{username}:{pw}@{host}:3306/{db_name}"
+
+db = SQLAlchemy(app)
 
 # Importing CRUD blueprints
 from main.routes.read_posts import *
@@ -34,8 +35,5 @@ app.register_blueprint(update_delete_bp)
 
 @app.route("/")
 def index():
-    cur = db.cursor()
-    cur.execute("""SELECT * FROM answers""")
-    data = cur.fetchall()
-    cur.close()
-    return str(data)
+    posts = Posts.query.all()
+    return jsonify([post.serialize() for post in posts]), 200
