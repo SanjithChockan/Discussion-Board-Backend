@@ -111,7 +111,7 @@ class Registration(db.Model):
         db.Integer, db.ForeignKey("courses.course_id"), primary_key=True
     )
 
-    user = db.relationship("User", backref=db.backref("registrations"))
+    student = db.relationship("Student", backref=db.backref("registrations"))
     course = db.relationship("Course", backref=db.backref("registrations"))
 
 
