@@ -42,7 +42,7 @@ class Post(db.Model):
             "post_id": self.post_id,
             "user_id": self.user_id,
             "course_id": self.course_id,
-            "title": self.post_title,
+            "post_title": self.post_title,
             "post_content": self.post_content,
             "time_created": self.time_created.isoformat(),
             "answer_count": self.answer_count,
