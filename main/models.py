@@ -19,7 +19,7 @@ class Answer(db.Model):
             "post_id": self.post_id,
             "answer_content": self.answer_content,
             "user_id": self.user_id,
-            "created_at": self.time_created
+            "created_at": self.time_created,
         }
 
 
@@ -83,8 +83,40 @@ class User(db.Model):
     email = db.Column(db.String(100), nullable=False, unique=True)
 
 
+class Student(db.Model):
+    __tablename__ = "students"
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), primary_key=True)
+
+    user = db.relationship("User", backref=db.backref("students", uselist=False))
+
+
+class Professor(db.Model):
+    __table__name = "professors"
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), primary_key=True)
+    course_id = db.Column(db.Integer, db.ForeignKey("courses.course_id"))
+
+    user = db.relationship("User", backref=db.backref("professors", uselist=False))
+    course = db.relationship("Course", backref=db.backref("professors", uselist=False))
+
+
+class Registration(db.Model):
+    __tablename__ = "registrations"
+
+    student_id = db.Column(
+        db.Integer, db.ForeignKey("students.user_id"), primary_key=True
+    )
+    course_id = db.Column(
+        db.Integer, db.ForeignKey("courses.course_id"), primary_key=True
+    )
+
+    user = db.relationship("User", backref=db.backref("registrations"))
+    course = db.relationship("Course", backref=db.backref("registrations"))
+
+
 class Rules(db.Model):
-    __tablename__ = 'rules'
+    __tablename__ = "rules"
 
     rule_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     course_id = db.Column(db.Integer, nullable=False)
