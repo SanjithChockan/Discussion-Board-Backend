@@ -48,6 +48,7 @@ virtualenv = "==20.21.0"
 virtualenv-clone = "==0.5.7"
 werkzeug = "==2.2.3"
 yarl = "==1.8.2"
+gunicorn = "*"
 
 [dev-packages]
 
