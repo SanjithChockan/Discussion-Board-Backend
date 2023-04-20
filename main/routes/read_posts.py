@@ -71,8 +71,9 @@ def get_professor_posts(professor_id, n=DEFAULT_N):
     return jsonify([post.serialize() for post in posts]), 200
 
 
+# Get recent posts
 @read_posts_bp.route("/get_recent_posts", methods=["GET"])
 @read_posts_bp.route("/get_recent_posts/<int:n>", methods=["GET"])
 def get_recent_posts(n=DEFAULT_N):
-    posts = Post.query.limit(n).all()
+    posts = Post.query.order_by(Post.time_created.desc()).limit(n).all()
     return jsonify([post.serialize() for post in posts]), 200
