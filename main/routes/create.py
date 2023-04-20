@@ -1,4 +1,5 @@
 from flask import jsonify, request, Blueprint
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from ..models import *
 from util import rule_based, gpt_api
 from datetime import datetime
@@ -7,11 +8,11 @@ create_bp = Blueprint("create", __name__)
 
 
 # Create post and generate AI answer
-# !!! Need to change to 'POST' only after testing
+@jwt_required()
 @create_bp.route("/create_post", methods=["POST"])
 def create_post():
     data = request.get_json()
-    user_id = data["user_id"]
+    user_id = get_jwt_identity()
     course_id = data["course_id"]
     title = data["post_title"]
     content = data["post_content"]
@@ -48,12 +49,12 @@ def create_post():
 
 
 # Create answer (from user)
-# !!! Need to change to 'POST' only after testing
+@jwt_required()
 @create_bp.route("/create_answer", methods=["POST"])
 def create_answer():
     data = request.get_json()
+    user_id = get_jwt_identity()
     post_id = data["post_id"]
-    user_id = data["user_id"]
     content = data["answer_content"]
 
     answer = Answer(
