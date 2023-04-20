@@ -10,9 +10,11 @@ update_delete_bp = Blueprint("update_delete", __name__)
 @jwt_required()
 def update_post():
     data = request.get_json()
+    user_id = get_jwt_identity()
+
+    # Check if user has professor role
 
     # Check if user is authorized to edit post
-    user_id = get_jwt_identity()
     post = Post.query.filter_by(post_id=data["post_id"]).first()
     if post.user_id != user_id:
         return jsonify({"error": "Unauthorized"}), 401
