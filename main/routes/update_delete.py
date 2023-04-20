@@ -11,15 +11,17 @@ update_delete_bp = Blueprint("update_delete", __name__)
 def update_post():
     data = request.get_json()
     user_id = get_jwt_identity()
-
-    # Check if user has professor role
-
-    # Check if user is authorized to edit post
-    post = Post.query.filter_by(post_id=data["post_id"]).first()
-    if post.user_id != user_id:
-        return jsonify({"error": "Unauthorized"}), 401
-
     post_id = data["post_id"]
+
+    # Check if user has professor role first
+    professor = Professor.query.filter_by(user_id=user_id).first()
+    if len(professor) == 0:
+        # Check if this is the user's post
+        post = Post.query.filter_by(post_id=post_id).first()
+        if post.user_id != user_id:
+            return jsonify({"error": "Unauthorized"}), 401
+
+    # Set updated content and title
     new_title = data["title"]
     new_content = data["content"]
 
@@ -38,14 +40,18 @@ def update_post():
 @jwt_required()
 def update_answer(id):
     data = request.get_json()
-
-    # Check if user is authorized to edit answer
     user_id = get_jwt_identity()
-    answer = Answer.query.filter_by(answer_id=data["answer_id"]).first()
-    if answer.user_id != user_id:
-        return jsonify({"error": "Unauthorized"}), 401
-
     answer_id = data["answer_id"]
+
+    # Check if user has professor role first
+    professor = Professor.query.filter_by(user_id=user_id).first()
+    if len(professor) == 0:
+        # Check if this is the user's answer
+        answer = Answer.query.filter_by(answer_id=answer_id).first()
+        if answer.user_id != user_id:
+            return jsonify({"error": "Unauthorized"}), 401
+
+    # Set updated content
     new_content = data["content"]
 
     # Fetch answer and update
@@ -63,10 +69,19 @@ def update_answer(id):
 def delete_post():
     data = request.get_json()
     post_id = data["post_id"]
+    user_id = get_jwt_identity()
 
+    # Check if post exists
     post = Post.query.filter_by(post_id=post_id).first()
     if post is None:
         return jsonify({"error": "Post not found."}), 404
+
+    # Check if user has professor role first
+    professor = Professor.query.filter_by(user_id=user_id).first()
+    if len(professor) == 0:
+        # Check if this is the user's post
+        if post.user_id != user_id:
+            return jsonify({"error": "Unauthorized"}), 401
 
     db.session.delete(post)
     db.session.commit()
@@ -80,10 +95,19 @@ def delete_post():
 def delete_answer():
     data = request.get_json()
     answer_id = data["answer_id"]
+    user_id = get_jwt_identity()
 
+    # Check if answer exists
     answer = Answer.query.filter_by(answer_id=answer_id).first()
     if answer is None:
         return jsonify({"error": "Answer not found."}), 404
+
+    # Check if user has professor role first
+    professor = Professor.query.filter_by(user_id=user_id).first()
+    if len(professor) == 0:
+        # Check if this is the user's answer
+        if answer.user_id != user_id:
+            return jsonify({"error": "Unauthorized"}), 401
 
     db.session.delete(answer)
     db.session.commit()
