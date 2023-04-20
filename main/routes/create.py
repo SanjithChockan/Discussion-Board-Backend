@@ -8,8 +8,8 @@ create_bp = Blueprint("create", __name__)
 
 
 # Create post and generate AI answer
-@jwt_required()
 @create_bp.route("/create_post", methods=["POST"])
+@jwt_required()
 def create_post():
     data = request.get_json()
     user_id = get_jwt_identity()
@@ -49,8 +49,8 @@ def create_post():
 
 
 # Create answer (from user)
-@jwt_required()
 @create_bp.route("/create_answer", methods=["POST"])
+@jwt_required()
 def create_answer():
     data = request.get_json()
     user_id = get_jwt_identity()

@@ -6,8 +6,8 @@ update_delete_bp = Blueprint("update_delete", __name__)
 
 
 # Edit post
-@jwt_required()
 @update_delete_bp.route("/edit_post", methods=["PUT"])
+@jwt_required()
 def update_post():
     data = request.get_json()
 
@@ -32,8 +32,8 @@ def update_post():
 
 
 # Edit answer
-@jwt_required()
 @update_delete_bp.route("/edit_answer", methods=["PUT"])
+@jwt_required()
 def update_answer(id):
     data = request.get_json()
 
@@ -56,8 +56,8 @@ def update_answer(id):
 
 
 # Delete post
-@jwt_required()
 @update_delete_bp.route("/delete_post", methods=["DELETE"])
+@jwt_required()
 def delete_post():
     data = request.get_json()
     post_id = data["post_id"]
@@ -73,8 +73,8 @@ def delete_post():
 
 
 # Delete answer
-@jwt_required()
 @update_delete_bp.route("/delete_answer", methods=["DELETE"])
+@jwt_required()
 def delete_answer():
     data = request.get_json()
     answer_id = data["answer_id"]
