@@ -21,7 +21,7 @@ def get_replies_from_answer(post_id, answer_id):
         WITH RECURSIVE nested_answers AS (
         SELECT *, 1 as depth, CAST(answer_id AS CHAR(255)) as path
         FROM answers
-        WHERE post_id = :post_id AND parent_answer IS answer_id
+        WHERE post_id = :post_id AND parent_answer IS NULL
 
         UNION ALL
 
@@ -36,6 +36,7 @@ def get_replies_from_answer(post_id, answer_id):
     )
 
     answers = session.query(Answer).from_statement(query).params(post_id=post_id, answer_id=answer_id).all()
+    print(answers)
 
     return jsonify([answer.serialize() for answer in answers]), 200
 
@@ -67,7 +68,11 @@ def get_answers_for_post(post_id, n=DEFAULT_N):
 
     answers = session.query(Answer).from_statement(query).params(post_id=post_id).all()
 
-    return jsonify([answer.serialize() for answer in answers]), 200
+    result = []
+    for a in answers:
+        if a.parent_answer == None:
+            result.append(a)
+    return jsonify([res.serialize() for res in result]), 200
 
 
 # Get course
