@@ -9,9 +9,9 @@ DEFAULT_N = 50
 
 # Get all posts from db
 @read_posts_bp.route("/get_all_posts", methods=["GET"])
-@read_posts_bp.route("/get_all_posts/<int:n>", methods=["GET"])
-def get_all_posts(n=DEFAULT_N):
-    posts = Post.query.limit(n).all()
+@read_posts_bp.route("/get_all_posts/<int:course_id>/<int:n>", methods=["GET"])
+def get_all_posts(course_id, n=DEFAULT_N):
+    posts = Post.query.filter_by(course_id=course_id).limit(n).all()
     return jsonify([post.serialize() for post in posts]), 200
 
 
