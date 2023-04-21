@@ -38,5 +38,5 @@ app.register_blueprint(auth.auth_blueprint, url_prefix="/auth")
 #Testing generating answer based on chat gpt
 @app.route("/")
 def index():
-    print(generate_answer('when are my exams'))
+    print(generate_answer('when is office hours'))
     return 'hello!'
