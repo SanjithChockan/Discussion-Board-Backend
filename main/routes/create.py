@@ -40,6 +40,7 @@ def create_post():
         user_id=3,
         answer_content=ai_answer,
         time_created=datetime.now(),
+        parent_answer=None,
     )
     db.session.add(answer)
     db.session.commit()
@@ -50,18 +51,25 @@ def create_post():
 
 # Create answer (from user)
 @create_bp.route("/create_answer", methods=["POST"])
-@jwt_required()
 def create_answer():
     data = request.get_json()
-    user_id = get_jwt_identity()
+    user_id = data["user_id"]
     post_id = data["post_id"]
-    content = data["answer_content"]
+    answer_content = data["answer_content"]
+    parent_answer = data["parent_answer"]
+
+    if parent_answer == -1:
+        parent_answer = None
 
     post = Post.query.filter_by(post_id=post_id).first()
     post.answer_count += 1
 
     answer = Answer(
-        post_id=post_id, user_id=user_id, content=content, time_created=datetime.now()
+        post_id=post_id,
+        user_id=user_id,
+        answer_content=answer_content,
+        time_created=datetime.now(),
+        parent_answer=parent_answer,
     )
     db.session.add(answer)
     db.session.commit()
