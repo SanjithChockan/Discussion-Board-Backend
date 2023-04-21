@@ -3,7 +3,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager, create_access_token
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from util.gpt_api import generate_answer
 # import aws_credentials as rds
 import os
 
@@ -35,7 +35,8 @@ app.register_blueprint(update_delete.update_delete_bp)
 app.register_blueprint(auth.auth_blueprint, url_prefix="/auth")
 
 
+#Testing generating answer based on chat gpt
 @app.route("/")
 def index():
-    posts = Posts.query.all()
-    return jsonify([post.serialize() for post in posts]), 200
+    print(generate_answer('when are my exams'))
+    return 'hello!'
