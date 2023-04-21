@@ -57,6 +57,9 @@ def create_answer():
     post_id = data["post_id"]
     content = data["answer_content"]
 
+    post = Post.query.filter_by(post_id=post_id).first()
+    post.answer_count += 1
+
     answer = Answer(
         post_id=post_id, user_id=user_id, content=content, time_created=datetime.now()
     )
