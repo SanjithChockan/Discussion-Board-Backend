@@ -11,7 +11,7 @@ DEFAULT_N = 50
 
 
 # Get replies from of an answer
-@read_other_bp.route("/get_answers_for_post/<int:post_id>/<int:answer_id>", methods=["GET"])
+@read_other_bp.route("/get_replies_from_answer/<int:post_id>/<int:answer_id>", methods=["GET"])
 def get_replies_from_answer(post_id, answer_id):
     Session = sessionmaker(bind=db.engine)
     session = Session()
