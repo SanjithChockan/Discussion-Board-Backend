@@ -36,9 +36,13 @@ def get_replies_from_answer(post_id, answer_id):
     )
 
     answers = session.query(Answer).from_statement(query).params(post_id=post_id, answer_id=answer_id).all()
-    print(answers)
+    result = []
+    for a in answers:
+        if a.parent_answer == answer_id:
+            result.append(a)
+    return jsonify([res.serialize() for res in result]), 200
 
-    return jsonify([answer.serialize() for answer in answers]), 200
+    #return jsonify([answer.serialize() for answer in answers]), 200
 
 # Get answers for specific post
 @read_other_bp.route("/get_answers_for_post/<int:post_id>", methods=["GET"])
@@ -68,11 +72,25 @@ def get_answers_for_post(post_id, n=DEFAULT_N):
 
     answers = session.query(Answer).from_statement(query).params(post_id=post_id).all()
 
-    result = []
+    nested_answers = []
+
+    def build_nested_dict(answers, parent_id=None):
+        for answer in answers:
+            if answer.parent_answer == parent_id:
+                serialized_answer = answer.serialize()
+                serialized_answer["replies"] = build_nested_dict(answers, answer.id)
+                nested_answers.append(serialized_answer)
+
+        return nested_answers
+
+    result = build_nested_dict(answers)
+    '''
     for a in answers:
         if a.parent_answer == None:
             result.append(a)
-    return jsonify([res.serialize() for res in result]), 200
+    '''
+    
+    return jsonify(result), 200
 
 # Get answers for a specific answer
 @read_other_bp.route("/get_answers_for_answer/<int:answer_id>", methods=["GET"])
