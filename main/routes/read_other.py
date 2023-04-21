@@ -1,5 +1,5 @@
 from flask import jsonify, request, Blueprint
-from ..models import Answer, Course
+from ..models import Answer, Course, User
 from util import related_post_and_search
 from app import db
 
@@ -26,4 +26,11 @@ def get_course(course_id):
         return jsonify({"message": "Course not found"}), 404
 
 
-# Get user
+# Get user id based off of username and password
+@read_other_bp.route("/get_user_id/<string:username>/<string:password>", methods=["GET"])
+def get_user_id(username, password):
+    user = User.query.filter_by(username= username, password= password).first()
+    if user and user.password == password:
+        return jsonify(user.user_id.serialize()), 200
+    else:
+        return jsonify({"message": "User not found"}), 404

@@ -7,6 +7,7 @@ read_posts_bp = Blueprint("read_posts", __name__)
 DEFAULT_N = 50
 
 
+
 # Get all posts from db
 @read_posts_bp.route("/get_all_posts", methods=["GET"])
 @read_posts_bp.route("/get_all_posts/<int:course_id>/<int:n>", methods=["GET"])
@@ -23,7 +24,7 @@ def get_specific_post(post_id):
     return jsonify(post.serialize()), 200
 
 
-# Get related post(s):
+# Get related post(s) based on post_id (so similar to a specific post):
 @read_posts_bp.route("/get_related_posts/<int:post_id>", methods=["GET"])
 @read_posts_bp.route("/get_related_posts/<int:post_id>/<int:n>", methods=["GET"])
 def get_related_posts(post_id, n=DEFAULT_N):
@@ -34,6 +35,25 @@ def get_related_posts(post_id, n=DEFAULT_N):
 
     return jsonify([post.serialize() for post in posts]), 200
 
+#Get related posts based on course_id and post id
+@read_posts_bp.route("/get_related_course_posts/<int:post_id>/<int:course_id>", methods=["GET"])
+def get_related_course_post(post_id, course_id):
+    related_post_ids = related_post_and_search.find_most_related_posts(post_id, course_id)
+    posts = []
+    if related_post_ids:
+        posts = Post.query.filter(Post.post_id.in_(related_post_ids)).all()
+
+    return jsonify([post.serialize() for post in posts]), 200
+
+#Get related posts based on content and post title
+@read_posts_bp.route("/get_related_content_posts/<int:post_id>/<int:course_id>/<string:content>/<string:title>", methods=["GET"])
+def get_related_content_post(post_id, course_id, content, title):
+    related_post_ids = related_post_and_search.find_most_related_posts(post_id, course_id, content, title)
+    posts = []
+    if related_post_ids:
+        posts = Post.query.filter(Post.post_id.in_(related_post_ids)).all()
+
+    return jsonify([post.serialize() for post in posts]), 200
 
 # Search:
 @read_posts_bp.route("/search/<string:query>", methods=["GET"])

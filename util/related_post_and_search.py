@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
-from typing import List
+from typing import List, Optional
 from main.models import *
 
 threshold = 0.1
@@ -28,19 +28,22 @@ def cosine_similarity(posts, choice, text):
     return scores
 
 
-def find_most_related_posts(target_post_id: int, n: int) -> List[int]:
+
+def find_most_related_posts(target_post_id: int, n: int, course_id: Optional[int] = None, 
+                            title: Optional[str] = None, content: Optional[str] = None) -> List[int]:
     # Create a TfidfVectorizer to convert text to numerical vectors
     vectorizer = TfidfVectorizer(stop_words="english")
     # Retrieve the content and course ID of the target post from the database
     target_post = Post.query.get(target_post_id)
-    target_post_title, target_post_content, target_post_course_id = (
-        target_post.post_title,
-        target_post.post_content,
-        target_post.course_id,
-    )
+    target_post_course_id = target_post.course_id
+    target_post_title = target_post.post_title if title is None else title
+    target_post_content = target_post.post_content if content is None else content
 
     # Retrieve all posts in the same course as the target post from the database
-    posts = Post.query.filter_by(course_id=target_post_course_id).all()
+    if course_id is not None:
+        posts = Post.query.filter_by(course_id=course_id).all()
+    else:
+        posts = Post.query.filter_by(course_id=target_post_course_id).all()
 
     content_scores = cosine_similarity(posts, "content", target_post_content)
     title_scores = cosine_similarity(posts, "title", target_post_title)
@@ -66,8 +69,9 @@ def find_most_related_posts(target_post_id: int, n: int) -> List[int]:
     sorted_scores = sorted(combined_scores.items(), key=lambda x: x[1], reverse=True)
 
     # Extract sorted list of ids
-    sorted_ids = [item[0] for item in sorted_scores]
+    sorted_ids = [item[0] for item in sorted_scores][:n]
     return sorted_ids
+
 
 
 def lookup_related_posts(search_sentence: str, n: int) -> List[int]:
