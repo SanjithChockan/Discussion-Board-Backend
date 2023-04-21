@@ -27,6 +27,7 @@ jwt = JWTManager(app)
 
 # Importing CRUD blueprints
 from main.routes import read_posts, read_other, create, update_delete, auth
+
 app.register_blueprint(read_posts.read_posts_bp)
 app.register_blueprint(read_other.read_other_bp)
 app.register_blueprint(create.create_bp)

@@ -9,6 +9,7 @@ class Answer(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
     answer_content = db.Column(db.Text, nullable=False)
     time_created = db.Column(db.DateTime, nullable=False)
+    parent_answer = db.Column(db.Integer, db.ForeignKey("answers.answer_id"))
 
     post = db.relationship("Post", backref=db.backref("answers", lazy=True))
     user = db.relationship("User", backref=db.backref("answers", lazy=True))
@@ -20,6 +21,7 @@ class Answer(db.Model):
             "answer_content": self.answer_content,
             "user_id": self.user_id,
             "created_at": self.time_created,
+            "parent_answer": self.parent_answer,
         }
 
 
