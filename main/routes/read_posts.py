@@ -7,7 +7,6 @@ read_posts_bp = Blueprint("read_posts", __name__)
 DEFAULT_N = 50
 
 
-
 # Get all posts from db
 @read_posts_bp.route("/get_all_posts", methods=["GET"])
 @read_posts_bp.route("/get_all_posts/<int:course_id>/<int:n>", methods=["GET"])

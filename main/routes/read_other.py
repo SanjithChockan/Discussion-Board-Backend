@@ -74,6 +74,34 @@ def get_answers_for_post(post_id, n=DEFAULT_N):
             result.append(a)
     return jsonify([res.serialize() for res in result]), 200
 
+# Get answers for a specific answer
+@read_other_bp.route("/get_answers_for_answer/<int:answer_id>", methods=["GET"])
+@read_other_bp.route("/get_answers_for_answer/<int:answer_id>/<int:n>", methods=["GET"])
+def get_answers_for_answer(answer_id, n=DEFAULT_N):
+    Session = sessionmaker(bind=db.engine)
+    session = Session()
+
+    query = text(
+        """
+        WITH RECURSIVE answer_tree AS (
+        SELECT answer_id, post_id, user_id, answer_content, time_created, parent_answer
+        FROM answers
+        WHERE answer_id = :answer_id
+        UNION ALL
+        SELECT a.answer_id, a.post_id, a.user_id, a.answer_content, a.time_created, a.parent_answer
+        FROM answers a
+        JOIN answer_tree t ON a.parent_answer = t.answer_id
+        )
+        SELECT answer_id, post_id, user_id, answer_content, time_created, parent_answer
+        FROM answer_tree;
+
+        """
+    )
+
+    answers = session.query(Answer).from_statement(query).params(answer_id = answer_id).all()
+
+    return jsonify([answer.serialize() for answer in answers]), 200
+
 
 # Get course
 @read_other_bp.route("/get_course/<int:course_id>", methods=["GET"])
