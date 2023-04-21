@@ -14,7 +14,6 @@ def register():
     new_user = User(username=data["username"], email=data["email"], password=hashed_password)
     db.session.add(new_user)
     db.session.commit()
-
     return jsonify({"message": "User registered successfully"}), 201
 
 # Login
