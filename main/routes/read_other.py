@@ -71,22 +71,20 @@ def get_answers_for_post(post_id, n=DEFAULT_N):
     )
 
     answers = session.query(Answer).from_statement(query).params(post_id=post_id).all()
+    nested_answers = answers.copy()
 
-    def fill_nested_replies(answer):
-        answer.replies = []
+    for na in nested_answers:
         for a in answers:
-            if a.parent_answer == answer.answer_id:
-                answer.replies.append(fill_nested_replies(a))
-        return answer
-
+            if a.parent_answer == na.answer_id:
+                na.replies.append(a)
+                
     result = []
 
-    for a in answers:
-        if a.parent_answer == None:
-            a.replies = fill_nested_replies(a).copy()
+    for na in nested_answers:
+        if na.parent_answer == None:
             result.append(a)
-            
-    return jsonify([res.serialize() for res in result]), 200
+    #return result
+    return jsonify([res.serialize() for res in nested_answers]), 200
 
 # Get answers for a specific answer
 @read_other_bp.route("/get_answers_for_answer/<int:answer_id>", methods=["GET"])
