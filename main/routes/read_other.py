@@ -37,17 +37,25 @@ def get_answers_for_post(post_id, n=DEFAULT_N):
     )
 
     answers = session.query(Answer).from_statement(query).params(post_id=post_id).all()
-    nested_answers = answers.copy()
 
-    for na in nested_answers:
-        for a in answers:
-            if a.parent_answer == na.answer_id:
-                na.replies.append(a)
+    def build_nested_dict(answers, parent_id=None):
+        nested_answers = []
 
-    result = []
+        for answer in answers:
+            if answer.parent_answer == parent_id:
+                answer_dict = {
+                    "answer_id": answer.answer_id,
+                    "post_id": answer.post_id,
+                    "user_id": answer.user_id,
+                    "answer_content": answer.answer_content,
+                    "parent_answer": answer.parent_answer,
+                    "time_created": answer.time_created,
+                }
+                answer_dict["replies"] = build_nested_dict(answers, answer.answer_id)
+                nested_answers.append(answer_dict)
 
-    for na in nested_answers:
-        if na.parent_answer == None:
-            result.append(a)
+        return nested_answers
+
+    nested_answers = build_nested_dict(answers)
     # return result
-    return jsonify([res.serialize() for res in nested_answers]), 200
+    return jsonify(nested_answers), 200
