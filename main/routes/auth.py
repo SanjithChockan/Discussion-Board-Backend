@@ -6,20 +6,26 @@ from ..models import User, db
 
 auth_blueprint = Blueprint("auth", __name__)
 
+
 # Register
 @auth_blueprint.route("/register", methods=["POST"])
 def register():
     data = request.get_json()
     hashed_password = generate_password_hash(data["password"], method="sha256")
-    new_user = User(username=data["username"], email=data["email"], password=hashed_password)
+    new_user = User(
+        username=data["username"], email=data["email"], password=hashed_password
+    )
     db.session.add(new_user)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        return jsonify({"message": "User already exists"}), 400
     return jsonify({"message": "User registered successfully"}), 201
+
 
 # Login
 @auth_blueprint.route("/login", methods=["POST"])
 def login():
-
     data = request.get_json()
     user = User.query.filter_by(username=data["username"]).first()
 

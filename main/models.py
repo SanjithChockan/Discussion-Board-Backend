@@ -17,11 +17,24 @@ class Answer(db.Model):
     def serialize(self):
         return {
             "answer_id": self.answer_id,
-            "post_id": self.post_id,
+            # "post": {
+            #     "post_id": self.post.post_id,
+            #     "post_title": self.post.post_title,
+            #     "post_content": self.post.post_content,
+            #     "course": {
+            #         "course_id": self.post.course.course_id,
+            #         "course_number": self.post.course.course_number,
+            #         "course_title": self.post.course.course_title,
+            #     },
+            # },
             "answer_content": self.answer_content,
-            "user_id": self.user_id,
-            "created_at": self.time_created,
+            "time_created": self.time_created,
             "parent_answer": self.parent_answer,
+            "user": {
+                "user_id": self.user.user_id,
+                "username": self.user.username,
+                "email": self.user.email,
+            },
         }
 
 

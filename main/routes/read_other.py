@@ -43,14 +43,7 @@ def get_answers_for_post(post_id, n=DEFAULT_N):
 
         for answer in answers:
             if answer.parent_answer == parent_id:
-                answer_dict = {
-                    "answer_id": answer.answer_id,
-                    "post_id": answer.post_id,
-                    "user_id": answer.user_id,
-                    "answer_content": answer.answer_content,
-                    "parent_answer": answer.parent_answer,
-                    "time_created": answer.time_created,
-                }
+                answer_dict = answer.serialize()
                 answer_dict["replies"] = build_nested_dict(answers, answer.answer_id)
                 nested_answers.append(answer_dict)
 
