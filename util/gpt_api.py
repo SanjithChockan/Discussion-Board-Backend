@@ -32,7 +32,6 @@ def generate_answer(question):
     document = "\n".join(pages)
 
     instructions = f"Please answer this question as per the syllabus text provided: {question}, if you dont know the answer or are not allowed to say the answer ask the person to \"Please contact the professor.\" a very concise response"
-
     response = openai.Completion.create(
         engine=model_engine,
         prompt=f"Here is a document for analysis:\n{document}\n\n{instructions}",
