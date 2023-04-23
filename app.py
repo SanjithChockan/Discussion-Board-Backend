@@ -3,7 +3,8 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager, create_access_token
 from werkzeug.security import generate_password_hash, check_password_hash
-from util.gpt_api import generate_answer
+
+# from util.gpt_api import generate_answer
 # import aws_credentials as rds
 import os
 
@@ -35,8 +36,8 @@ app.register_blueprint(update_delete.update_delete_bp)
 app.register_blueprint(auth.auth_blueprint, url_prefix="/auth")
 
 
-#Testing generating answer based on chat gpt
+# Testing generating answer based on chat gpt
 @app.route("/")
 def index():
-    print(generate_answer('How many homework assignments are there'))
-    return 'hello!'
+    #print(generate_answer("when is office hours"))
+    return "hello!"

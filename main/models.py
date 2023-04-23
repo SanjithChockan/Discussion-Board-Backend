@@ -22,7 +22,6 @@ class Answer(db.Model):
             "user_id": self.user_id,
             "created_at": self.time_created,
             "parent_answer": self.parent_answer,
-            "replies": [],
         }
 
 

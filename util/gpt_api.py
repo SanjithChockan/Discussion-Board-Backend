@@ -1,24 +1,23 @@
 import openai
 import os
 import json
-from PyPDF2 import PdfReader
 
-openai.api_key = os.environ.get('OPENAI_KEY')
+# from PyPDF2 import PdfReader
+
+openai.api_key = os.environ.get("OPENAI_KEY")
 
 
 # Testing GPT-3.5 "davinci" model to generate answer to question
 def generate(prompt):
     response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=prompt,
-        max_tokens=100
+        model="text-davinci-003", prompt=prompt, max_tokens=100
     )
     generated_text = response.choices[0].text
     print(generated_text)
     return generated_text
 
 
-# Generating answers to a specific question based on syllabus
+"""# Generating answers to a specific question based on syllabus
 def generate_answer(question):
     model_engine = "text-davinci-003"
 
@@ -45,7 +44,4 @@ def generate_answer(question):
     # Return the text of the first choice
     return response.choices[0].text
 
-
-
-
-
+"""
