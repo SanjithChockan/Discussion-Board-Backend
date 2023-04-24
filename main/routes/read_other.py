@@ -32,7 +32,7 @@ def get_answers_for_post(post_id, n=DEFAULT_N):
         WHERE a.post_id = :post_id
         )
 
-        SELECT * FROM nested_answers ORDER BY path;
+        SELECT * FROM nested_answers ORDER BY path, time_created DESC;
         """
     )
 
