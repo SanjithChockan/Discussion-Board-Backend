@@ -1,4 +1,5 @@
 from app import db
+from datetime import datetime
 
 
 class Answer(db.Model):
@@ -8,7 +9,7 @@ class Answer(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey("posts.post_id"))
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
     answer_content = db.Column(db.Text, nullable=False)
-    time_created = db.Column(db.DateTime, nullable=False)
+    time_created = db.Column(db.TIMESTAMP, nullable=False, default=datetime.utcnow)
     parent_answer = db.Column(db.Integer, db.ForeignKey("answers.answer_id"))
 
     post = db.relationship("Post", backref=db.backref("answers", lazy=True))
@@ -24,7 +25,7 @@ class Answer(db.Model):
         return {
             "answer_id": self.answer_id,
             "answer_content": self.answer_content,
-            "time_created": self.time_created,
+            "time_created": self.time_created.isoformat(),
             "parent_answer": self.parent_answer,
             "user": {
                 "user_id": self.user.user_id,
@@ -43,7 +44,7 @@ class Post(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey("courses.course_id"))
     post_title = db.Column(db.String(255), nullable=False)
     post_content = db.Column(db.Text, nullable=False)
-    time_created = db.Column(db.DateTime, nullable=False)
+    time_created = db.Column(db.TIMESTAMP, nullable=False, default=datetime.utcnow)
     answer_count = db.Column(db.Integer, nullable=False)
 
     course = db.relationship("Course", backref=db.backref("posts", lazy=True))
