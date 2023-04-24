@@ -48,7 +48,10 @@ virtualenv = "==20.21.0"
 virtualenv-clone = "==0.5.7"
 werkzeug = "==2.2.3"
 yarl = "==1.8.2"
-gunicorn = "*"
+gunicorn = "==20.1.0"
+mysql-connector-python = "==8.0.32"
+opencv-python = "==4.7.0.72"
+pytz = "==2023.3"
 
 [dev-packages]
 

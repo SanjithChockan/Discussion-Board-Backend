@@ -7,6 +7,11 @@ import pytz
 
 create_bp = Blueprint("create", __name__)
 
+utc_time = datetime.utcnow()
+utc_zone = pytz.timezone("UTC")
+central_zone = pytz.timezone("US/Central")
+central_time = utc_zone.localize(utc_time).astimezone(central_zone)
+
 
 # Create post and generate AI answer
 @create_bp.route("/create_post", methods=["POST"])
@@ -17,11 +22,6 @@ def create_post():
     course_id = data["course_id"]
     title = data["post_title"]
     content = data["post_content"]
-
-    utc_time = datetime.utcnow()
-    utc_zone = pytz.timezone('UTC')
-    central_zone = pytz.timezone('US/Central')
-    central_time = utc_zone.localize(utc_time).astimezone(central_zone)
 
     # Insert post
     post = Post(
@@ -74,7 +74,7 @@ def create_answer():
         post_id=post_id,
         user_id=user_id,
         answer_content=answer_content,
-        time_created=datetime.now(),
+        time_created=central_time.now(),
         parent_answer=parent_answer,
     )
     db.session.add(answer)
