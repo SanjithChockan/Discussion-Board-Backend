@@ -8,7 +8,7 @@ votes_bp = Blueprint("votes", __name__)
 
 
 # Upvote answer
-@votes_bp.route("/upvote_answer", methods=["POST"])
+@votes_bp.route("/upvote", methods=["POST"])
 @jwt_required()
 def upvote_post():
     data = request.get_json()
@@ -32,7 +32,7 @@ def upvote_post():
 
 
 # Downvote answer
-@votes_bp.route("/downvote_answer", methods=["POST"])
+@votes_bp.route("/downvote", methods=["POST"])
 @jwt_required()
 def downvote_post():
     data = request.get_json()
@@ -56,7 +56,7 @@ def downvote_post():
 
 
 # Undo vote
-@votes_bp.route("/undo_vote", methods=["POST"])
+@votes_bp.route("/neutral_vote", methods=["POST"])
 @jwt_required()
 def undo_vote():
     data = request.get_json()
