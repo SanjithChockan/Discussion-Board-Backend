@@ -9,7 +9,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*", "supports_credentials": True}})
 
 # set sql alchemy database uri like this 'mysql+pymysql://username:password@host/database'
 
