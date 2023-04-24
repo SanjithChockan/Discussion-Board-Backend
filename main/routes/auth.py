@@ -33,4 +33,6 @@ def login():
         return jsonify({"message": "Invalid username or password"}), 401
 
     access_token = create_access_token(identity=user.user_id)
-    return jsonify({"access_token": access_token}), 200
+    user = user.serialize()
+    user["access_token"] = access_token
+    return jsonify(user), 200

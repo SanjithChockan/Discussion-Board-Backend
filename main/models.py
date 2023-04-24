@@ -97,6 +97,23 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(100), nullable=False, unique=True)
 
+    def serialize(self):
+        is_professor = self.professors is not None
+        is_student = self.students is not None
+
+        role = "unknown"
+        if is_professor:
+            role = "professor"
+        elif is_student:
+            role = "student"
+
+        return {
+            "user_id": self.user_id,
+            "username": self.username,
+            "email": self.email,
+            "role": role,
+        }
+
 
 class Student(db.Model):
     __tablename__ = "students"
@@ -107,7 +124,7 @@ class Student(db.Model):
 
 
 class Professor(db.Model):
-    __table__name = "professors"
+    __tablename__ = "professors"
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey("courses.course_id"))
