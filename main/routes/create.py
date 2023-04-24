@@ -3,6 +3,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from ..models import *
 from util import rule_based, gpt_api
 from datetime import datetime
+import pytz
 
 create_bp = Blueprint("create", __name__)
 
@@ -17,13 +18,18 @@ def create_post():
     title = data["post_title"]
     content = data["post_content"]
 
+    utc_time = datetime.utcnow()
+    utc_zone = pytz.timezone('UTC')
+    central_zone = pytz.timezone('US/Central')
+    central_time = utc_zone.localize(utc_time).astimezone(central_zone)
+
     # Insert post
     post = Post(
         user_id=user_id,
         course_id=course_id,
         post_title=title,
         post_content=content,
-        time_created=datetime.now(),
+        time_created=central_time.now(),
         answer_count=1,
     )
     db.session.add(post)
@@ -39,7 +45,7 @@ def create_post():
         post_id=post.post_id,
         user_id=3,
         answer_content=ai_answer,
-        time_created=datetime.now(),
+        time_created=central_time.now(),
         parent_answer=None,
     )
     db.session.add(answer)
