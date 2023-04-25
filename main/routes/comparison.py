@@ -40,7 +40,7 @@ def get_related_content_post(content, title, n=DEFAULT_N):
 @comparison_bp.route("/search/<string:query>", methods=["GET"])
 @comparison_bp.route("/search/<string:query>/<int:n>", methods=["GET"])
 def search(query, n=DEFAULT_N):
-    lookup_post_ids = related_post_and_search.lookup_related_posts(query, n)
+    lookup_post_ids = related_post_and_search.search_sentence(query, n)
     posts = []
     if lookup_post_ids:
         posts = Post.query.filter(Post.post_id.in_(lookup_post_ids)).all()
