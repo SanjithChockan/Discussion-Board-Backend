@@ -78,7 +78,7 @@ def delete_post():
 
     # Check if user has professor role first
     professor = Professor.query.filter_by(user_id=user_id).first()
-    if len(professor) == 0:
+    if not professor:
         # Check if this is the user's post
         if post.user_id != user_id:
             return jsonify({"error": "Unauthorized"}), 401
