@@ -7,3 +7,4 @@ from datetime import datetime
 courses_bp = Blueprint("courses", __name__)
 
 # Register for list of courses
+@courses_bp.route("/register", methods=["POST"])

@@ -1,7 +1,8 @@
 from flask import request, jsonify, Blueprint
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
-from ..models import User, Professor, Student, db
+from ..models import User, Professor, Student, Registration, db
+import random
 
 
 auth_blueprint = Blueprint("auth", __name__)
@@ -29,6 +30,13 @@ def register():
         student = Student(user_id=new_user.user_id)
         db.session.add(student)
         db.session.commit()
+
+        # register for courses randomly 1-8, select 4
+        items = random.sample(range(1, 9), 4)
+        for i in range(4):
+            registration = Registration(student_id=new_user.user_id, course_id=items[i])
+            db.session.add(registration)
+            db.session.commit()
 
     return jsonify({"message": "User registered successfully"}), 201
 
