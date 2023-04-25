@@ -4,7 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager, create_access_token
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
-from util.gpt_api import generate_answer
 
 # from util.gpt_api import generate_answer
 # import aws_credentials as rds
@@ -43,6 +42,5 @@ app.register_blueprint(votes.votes_bp)
 # Testing generating answer based on chat gpt
 @app.route("/")
 def index():
-    #print(generate_answer('When is my final exam', 5))
     # print(generate_answer("when is office hours"))
     return "hello!"
