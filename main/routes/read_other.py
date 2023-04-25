@@ -4,6 +4,7 @@ from util import related_post_and_search
 from app import db
 from sqlalchemy import text
 from sqlalchemy.orm import sessionmaker
+from util.gpt_api import generate_answer
 
 read_other_bp = Blueprint("read_other", __name__)
 
@@ -52,3 +53,12 @@ def get_answers_for_post(post_id, n=DEFAULT_N):
     nested_answers = build_nested_dict(answers)
     # return result
     return jsonify(nested_answers), 200
+
+@read_other_bp.route("/get_quick_answer", methods=["POST"])
+def quick_help():
+    data = request.get_json()
+    course_id = data["course_id"]
+    content = data["content"]
+    answer = generate_answer(content, course_id)
+    answer =  answer.strip().replace(" ", "").replace("\n", "")
+    return jsonify(answer), 200
