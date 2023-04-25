@@ -28,6 +28,8 @@ def register():
         student = Student(user_id=new_user.user_id)
         db.session.add(student)
 
+    db.commit()
+
     return jsonify({"message": "User registered successfully"}), 201
 
 
