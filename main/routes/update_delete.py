@@ -22,8 +22,8 @@ def update_post():
             return jsonify({"error": "Unauthorized"}), 401
 
     # Set updated content and title
-    new_title = data["title"]
-    new_content = data["content"]
+    new_title = data["post_title"]
+    new_content = data["post_content"]
 
     # Fetch post and update
     post = Post.query.filter_by(post_id=post_id).first()
@@ -52,7 +52,7 @@ def update_answer(id):
             return jsonify({"error": "Unauthorized"}), 401
 
     # Set updated content
-    new_content = data["content"]
+    new_content = data["answer_content"]
 
     # Fetch answer and update
     answer = Answer.query.filter_by(answer_id=answer_id).first()

@@ -49,9 +49,10 @@ def create_post():
 
 # Create answer (from user)
 @create_bp.route("/create_answer", methods=["POST"])
+@jwt_required()
 def create_answer():
     data = request.get_json()
-    user_id = data["user_id"]
+    user_id = get_jwt_identity()
     post_id = data["post_id"]
     answer_content = data["answer_content"]
     parent_answer = data["parent_answer"]
