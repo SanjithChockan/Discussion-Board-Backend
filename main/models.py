@@ -6,18 +6,13 @@ class Answer(db.Model):
     __tablename__ = "answers"
 
     answer_id = db.Column(db.Integer, primary_key=True)
-    post_id = db.Column(db.Integer, db.ForeignKey("posts.post_id"))
+    post_id = db.Column(db.Integer, db.ForeignKey("posts.post_id", ondelete="CASCADE"))
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
     answer_content = db.Column(db.Text, nullable=False)
     time_created = db.Column(db.TIMESTAMP, nullable=False, default=datetime.utcnow)
     parent_answer = db.Column(db.Integer, db.ForeignKey("answers.answer_id"))
 
-    post = db.relationship(
-        "Post",
-        backref=db.backref("answers", lazy=True),
-        cascade="all, delete-orphan",
-        passive_deletes=True,
-    )
+    post = db.relationship("Post", backref=db.backref("answers", lazy=True))
     user = db.relationship("User", backref=db.backref("answers", lazy=True))
 
     @property
