@@ -1,6 +1,7 @@
 from flask import jsonify, request, Blueprint
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from ..models import *
+from ..errors import BadRequestError
 
 update_delete_bp = Blueprint("update_delete", __name__)
 
@@ -10,6 +11,12 @@ update_delete_bp = Blueprint("update_delete", __name__)
 @jwt_required()
 def update_post():
     data = request.get_json()
+
+    required_keys = ["post_id", "post_title", "post_content"]
+    for key in required_keys:
+        if key not in data:
+            raise BadRequestError(f"Missing {key}")
+
     user_id = get_jwt_identity()
     post_id = data["post_id"]
 
@@ -40,6 +47,12 @@ def update_post():
 @jwt_required()
 def update_answer(id):
     data = request.get_json()
+    # Error Handling
+    required_keys = ["answer_id", "answer_content"]
+    for key in required_keys:
+        if key not in data:
+            raise BadRequestError(f"Missing {key}")
+
     user_id = get_jwt_identity()
     answer_id = data["answer_id"]
 
@@ -68,6 +81,12 @@ def update_answer(id):
 @jwt_required()
 def delete_post():
     data = request.get_json()
+    # Error Handling
+    required_keys = ["post_id"]
+    for key in required_keys:
+        if key not in data:
+            raise BadRequestError(f"Missing {key}")
+
     post_id = data["post_id"]
     user_id = get_jwt_identity()
 
@@ -94,6 +113,12 @@ def delete_post():
 @jwt_required()
 def delete_answer():
     data = request.get_json()
+    # Error Handling
+    required_keys = ["answer_id"]
+    for key in required_keys:
+        if key not in data:
+            raise BadRequestError(f"Missing {key}")
+
     answer_id = data["answer_id"]
     user_id = get_jwt_identity()
 

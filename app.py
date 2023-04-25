@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager, create_access_token
 from werkzeug.security import generate_password_hash, check_password_hash
+import main.errors
 import datetime
 
 # from util.gpt_api import generate_answer
@@ -37,6 +38,14 @@ app.register_blueprint(create.create_bp)
 app.register_blueprint(update_delete.update_delete_bp)
 app.register_blueprint(auth.auth_blueprint, url_prefix="/auth")
 app.register_blueprint(votes.votes_bp)
+
+# Error handling
+app.register_error_handler(
+    main.errors.BadRequestError, main.errors.handle_bad_request_error
+)
+app.register_error_handler(
+    main.errors.NotFoundError, main.errors.handle_not_found_error
+)
 
 
 # Testing generating answer based on chat gpt
