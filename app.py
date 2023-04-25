@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager, create_access_token
 from werkzeug.security import generate_password_hash, check_password_hash
+import datetime
 
 # from util.gpt_api import generate_answer
 # import aws_credentials as rds
@@ -22,6 +23,7 @@ app.config[
     "SQLALCHEMY_DATABASE_URI"
 ] = f"mysql+pymysql://{username}:{pw}@{host}:3306/{db_name}"
 app.config["JWT_SECRET_KEY"] = "your-secret-key"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(minutes=1440)
 
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
