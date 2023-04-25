@@ -1,7 +1,7 @@
 from flask import request, jsonify, Blueprint
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
-from ..models import User, db
+from ..models import User, Professor, Student, db
 
 
 auth_blueprint = Blueprint("auth", __name__)
@@ -20,6 +20,14 @@ def register():
         db.session.commit()
     except:
         return jsonify({"message": "User already exists"}), 400
+
+    if data["is_professor"]:
+        professor = Professor(user_id=new_user.user_id, course_id=data["course_id"])
+        db.session.add(professor)
+    else:
+        student = Student(user_id=new_user.user_id)
+        db.session.add(student)
+
     return jsonify({"message": "User registered successfully"}), 201
 
 
