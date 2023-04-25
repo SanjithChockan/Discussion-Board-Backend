@@ -12,7 +12,12 @@ class Answer(db.Model):
     time_created = db.Column(db.TIMESTAMP, nullable=False, default=datetime.utcnow)
     parent_answer = db.Column(db.Integer, db.ForeignKey("answers.answer_id"))
 
-    post = db.relationship("Post", backref=db.backref("answers", lazy=True))
+    post = db.relationship(
+        "Post",
+        backref=db.backref("answers", lazy=True),
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
     user = db.relationship("User", backref=db.backref("answers", lazy=True))
 
     @property
