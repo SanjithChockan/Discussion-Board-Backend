@@ -28,9 +28,13 @@ def cosine_similarity(posts, choice, text):
     return scores
 
 
-
-def find_most_related_posts(target_post_id: int, n: int, course_id: Optional[int] = None, 
-                            title: Optional[str] = None, content: Optional[str] = None) -> List[int]:
+def find_most_related_posts(
+    target_post_id: int,
+    n: int,
+    course_id: Optional[int] = None,
+    title: Optional[str] = None,
+    content: Optional[str] = None,
+) -> List[int]:
     # Create a TfidfVectorizer to convert text to numerical vectors
     vectorizer = TfidfVectorizer(stop_words="english")
     # Retrieve the content and course ID of the target post from the database
@@ -73,8 +77,39 @@ def find_most_related_posts(target_post_id: int, n: int, course_id: Optional[int
     return sorted_ids
 
 
+def search_content_title(search_content: str, search_title: str, n: int) -> List[int]:
+    # Retrieve all posts from the MySQL database
+    posts = Post.query.all()
 
-def lookup_related_posts(search_sentence: str, n: int) -> List[int]:
+    content_scores = cosine_similarity(posts, "content", search_content)
+    title_scores = cosine_similarity(posts, "title", search_title)
+
+    combined_scores = {}
+    for id, score in content_scores:
+        if id not in combined_scores:
+            combined_scores[id] = score * 1
+        else:
+            combined_scores[id] += score * 1
+    for id, score in title_scores:
+        if id not in combined_scores:
+            combined_scores[id] = score * scale
+        else:
+            combined_scores[id] += score * scale
+
+    keys_to_delete = [
+        id for id in combined_scores if combined_scores[id] < (1 + scale) * threshold
+    ]
+    [combined_scores.pop(id) for id in keys_to_delete]
+
+    # Sort dictionary by value (score) in descending order
+    sorted_scores = sorted(combined_scores.items(), key=lambda x: x[1], reverse=True)
+
+    # Extract sorted list of ids
+    sorted_ids = [item[0] for item in sorted_scores]
+    return sorted_ids
+
+
+def search_sentence(search_sentence: str, n: int) -> List[int]:
     # Retrieve all posts from the MySQL database
     posts = Post.query.all()
 

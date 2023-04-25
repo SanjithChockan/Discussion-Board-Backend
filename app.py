@@ -30,7 +30,15 @@ db = SQLAlchemy(app)
 jwt = JWTManager(app)
 
 # Importing CRUD blueprints
-from main.routes import read_posts, read_other, create, update_delete, auth, votes
+from main.routes import (
+    read_posts,
+    read_other,
+    create,
+    update_delete,
+    auth,
+    votes,
+    comparison,
+)
 
 app.register_blueprint(read_posts.read_posts_bp)
 app.register_blueprint(read_other.read_other_bp)
@@ -38,6 +46,7 @@ app.register_blueprint(create.create_bp)
 app.register_blueprint(update_delete.update_delete_bp)
 app.register_blueprint(auth.auth_blueprint, url_prefix="/auth")
 app.register_blueprint(votes.votes_bp)
+app.register_blueprint(comparison.comparison_bp)
 
 # Error handling
 app.register_error_handler(
