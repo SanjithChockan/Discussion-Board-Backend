@@ -24,11 +24,11 @@ def register():
     if data["is_professor"]:
         professor = Professor(user_id=new_user.user_id, course_id=data["course_id"])
         db.session.add(professor)
+        db.session.commit()
     else:
         student = Student(user_id=new_user.user_id)
         db.session.add(student)
-
-    db.commit()
+        db.session.commit()
 
     return jsonify({"message": "User registered successfully"}), 201
 
