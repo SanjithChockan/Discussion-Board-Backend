@@ -3,7 +3,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from ..models import *
 from util import rule_based, gpt_api
 from datetime import datetime
-from errors import *
+from ..errors import *
 
 courses_bp = Blueprint("courses", __name__)
 
