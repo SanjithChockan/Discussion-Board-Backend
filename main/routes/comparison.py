@@ -39,10 +39,10 @@ def get_related_content_post(course_id, content, title, n=DEFAULT_N):
 
 
 # Search:
-@comparison_bp.route("/search/<string:query>", methods=["GET"])
-@comparison_bp.route("/search/<string:query>/<int:n>", methods=["GET"])
-def search(query, n=DEFAULT_N):
-    lookup_post_ids = related_post_and_search.search_sentence(query, n)
+@comparison_bp.route("/search/<course_id>/<string:query>", methods=["GET"])
+@comparison_bp.route("/search/<course_id>/<string:query>/<int:n>", methods=["GET"])
+def search(query, course_id, n=DEFAULT_N):
+    lookup_post_ids = related_post_and_search.search_sentence(query, n, course_id)
     posts = []
     if lookup_post_ids:
         posts = Post.query.filter(Post.post_id.in_(lookup_post_ids)).all()
