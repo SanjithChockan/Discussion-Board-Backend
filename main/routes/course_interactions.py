@@ -7,4 +7,16 @@ from datetime import datetime
 courses_bp = Blueprint("courses", __name__)
 
 # Register for list of courses
-@courses_bp.route("/register", methods=["POST"])
+# @courses_bp.route("/register", methods=["POST"])
+# @jwt_required()
+# def register():
+#     return
+
+
+# Get list of courses for user
+@courses_bp.route("/user_courses", methods=["GET"])
+@jwt_required()
+def user_courses():
+    registrations = Registration.query.filter_by(student_id=get_jwt_identity()).all()
+    courses = [registration.course.serialize() for registration in registrations]
+    return jsonify(courses), 200

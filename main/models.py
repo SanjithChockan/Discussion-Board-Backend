@@ -86,6 +86,7 @@ class Course(db.Model):
             "course_id": self.course_id,
             "course_number": self.course_number,
             "course_title": self.course_title,
+            "professor": self.professors.serialize(),
         }
 
 
@@ -131,6 +132,13 @@ class Professor(db.Model):
 
     user = db.relationship("User", backref=db.backref("professors", uselist=False))
     course = db.relationship("Course", backref=db.backref("professors", uselist=False))
+
+    def serialize(self):
+        return {
+            "user_id": self.user_id,
+            "username": self.user.username,
+            "email": self.user.email,
+        }
 
 
 class Registration(db.Model):

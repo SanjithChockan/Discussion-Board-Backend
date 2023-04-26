@@ -38,6 +38,7 @@ from main.routes import (
     auth,
     votes,
     comparison,
+    course_interactions,
 )
 
 app.register_blueprint(read_posts.read_posts_bp)
@@ -47,6 +48,7 @@ app.register_blueprint(update_delete.update_delete_bp)
 app.register_blueprint(auth.auth_blueprint, url_prefix="/auth")
 app.register_blueprint(votes.votes_bp)
 app.register_blueprint(comparison.comparison_bp)
+app.register_blueprint(course_interactions.courses_bp)
 
 # Error handling
 app.register_error_handler(
