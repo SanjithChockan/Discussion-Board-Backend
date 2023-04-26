@@ -20,9 +20,11 @@ courses_bp = Blueprint("courses", __name__)
 def user_courses():
     user_id = get_jwt_identity()
     student = Student.query.get(user_id)
-    if not student:
-        raise BadRequestError("User is not a student")
-
-    registrations = Registration.query.filter_by(student_id=user_id).all()
-    courses = [registration.course.serialize() for registration in registrations]
-    return jsonify(courses), 200
+    professor = Professor.query.get(user_id)
+    if student:
+        registrations = Registration.query.filter_by(student_id=user_id).all()
+        courses = [registration.course.serialize() for registration in registrations]
+        return jsonify(courses), 200
+    elif professor:
+        course = Course.query.filter_by(course_id=professor.course_id).all()
+        return jsonify(course.serialize()), 200
