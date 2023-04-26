@@ -24,11 +24,13 @@ def get_related_course_post(post_id, course_id):
 
 # Get related posts based on content and post title
 @comparison_bp.route(
-    "/search_with_title_content/<string:content>/<string:title>/<int:n>",
+    "/search_with_title_content/<int:course_id>/<string:content>/<string:title>/<int:n>",
     methods=["GET"],
 )
-def get_related_content_post(content, title, n=DEFAULT_N):
-    related_post_ids = related_post_and_search.search_content_title(content, title, n)
+def get_related_content_post(course_id, content, title, n=DEFAULT_N):
+    related_post_ids = related_post_and_search.search_content_title(
+        content, title, n, course_id=course_id
+    )
     posts = []
     if related_post_ids:
         posts = Post.query.filter(Post.post_id.in_(related_post_ids)).all()

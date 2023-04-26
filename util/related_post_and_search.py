@@ -28,29 +28,17 @@ def cosine_similarity(posts, choice, text):
     return scores
 
 
-def find_most_related_posts(
-    target_post_id: int,
-    n: int,
-    course_id: Optional[int] = None,
-    title: Optional[str] = None,
-    content: Optional[str] = None,
-) -> List[int]:
+def find_most_related_posts(target_post_id: int, n: int, course_id) -> List[int]:
     # Create a TfidfVectorizer to convert text to numerical vectors
     vectorizer = TfidfVectorizer(stop_words="english")
+
     # Retrieve the content and course ID of the target post from the database
     target_post = Post.query.get(target_post_id)
-    target_post_course_id = target_post.course_id
-    target_post_title = target_post.post_title if title is None else title
-    target_post_content = target_post.post_content if content is None else content
-
     # Retrieve all posts in the same course as the target post from the database
-    if course_id is not None:
-        posts = Post.query.filter_by(course_id=course_id).all()
-    else:
-        posts = Post.query.filter_by(course_id=target_post_course_id).all()
+    posts = Post.query.filter_by(course_id=course_id).all()
 
-    content_scores = cosine_similarity(posts, "content", target_post_content)
-    title_scores = cosine_similarity(posts, "title", target_post_title)
+    content_scores = cosine_similarity(posts, "content", target_post.post_content)
+    title_scores = cosine_similarity(posts, "title", target_post.post_title)
 
     combined_scores = {}
     for id, score in content_scores:
@@ -77,9 +65,11 @@ def find_most_related_posts(
     return sorted_ids
 
 
-def search_content_title(search_content: str, search_title: str, n: int) -> List[int]:
+def search_content_title(
+    search_content: str, search_title: str, n: int, course_id
+) -> List[int]:
     # Retrieve all posts from the MySQL database
-    posts = Post.query.all()
+    posts = Post.query.filter_by(course_id=course_id).all()
 
     content_scores = cosine_similarity(posts, "content", search_content)
     title_scores = cosine_similarity(posts, "title", search_title)
@@ -109,9 +99,9 @@ def search_content_title(search_content: str, search_title: str, n: int) -> List
     return sorted_ids
 
 
-def search_sentence(search_sentence: str, n: int) -> List[int]:
+def search_sentence(search_sentence: str, n: int, course_id) -> List[int]:
     # Retrieve all posts from the MySQL database
-    posts = Post.query.all()
+    posts = Post.query.filter_by(course_id=course_id).all()
 
     content_scores = cosine_similarity(posts, "content", search_sentence)
     title_scores = cosine_similarity(posts, "title", search_sentence)
