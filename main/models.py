@@ -166,5 +166,7 @@ class Vote(db.Model):
     vote_type = db.Column(db.Boolean, nullable=False)
 
     # Define relationships (optional but recommended)
-    answer = db.relationship("Answer", backref=db.backref("votes"))
+    answer = db.relationship(
+        "Answer", backref=db.backref("votes", lazy=True, cascade="all, delete-orphan")
+    )
     user = db.relationship("User", backref=db.backref("votes"))
