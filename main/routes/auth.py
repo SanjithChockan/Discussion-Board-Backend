@@ -1,7 +1,7 @@
 from flask import request, jsonify, Blueprint
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
-from ..models import User, Professor, Student, Registration, db
+from ..models import *
 import random
 
 
@@ -51,6 +51,20 @@ def login():
         return jsonify({"message": "Invalid username or password"}), 401
 
     access_token = create_access_token(identity=user.user_id)
+
+    courses = []
+
+    student = Student.query.get(user.user_id)
+    professor = Professor.query.get(user.user_id)
+    if student:
+        registrations = Registration.query.filter_by(student_id=user.user_id).all()
+        courses = [registration.course.serialize() for registration in registrations]
+    elif professor:
+        courses = Course.query.filter_by(course_id=professor.course_id).all()
+        courses = [course.serialize() for course in courses]
+
     user = user.serialize()
+    user["courses"] = courses
     user["access_token"] = access_token
+
     return jsonify(user), 200
