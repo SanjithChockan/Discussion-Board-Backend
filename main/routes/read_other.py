@@ -5,6 +5,7 @@ from app import db
 from sqlalchemy import text
 from sqlalchemy.orm import sessionmaker
 from util.gpt_api import generate_answer
+import re
 
 read_other_bp = Blueprint("read_other", __name__)
 
@@ -60,5 +61,10 @@ def quick_help():
     course_id = data["course_id"]
     content = data["content"]
     answer = generate_answer(content, course_id)
-    answer =  answer.strip().replace(" ", "").replace("\n", "")
+    answer = re.search('[a-zA-Z0-9].*', answer)
+    if answer:
+        answer = answer.group(0)
+    else:
+        answer = ""
+    answer = answer.strip().replace("\n", "")
     return jsonify(answer), 200

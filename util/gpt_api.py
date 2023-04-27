@@ -45,7 +45,7 @@ def generate_answer(question, course_id):
     # Open the PDF file (Put the path to the pdf)
     with BytesIO(get_pdf(course_id).data) as f:
         pdf = PdfReader(f)
-        pages = []
+        pages = [] 
         for page in range(len(pdf.pages)):
             pages.append(pdf.pages[page].extract_text())
 
@@ -56,7 +56,7 @@ def generate_answer(question, course_id):
         engine=model_engine,
         prompt=f"Here is a document for analysis:\n{document}\n\n{instructions}",
         temperature=0.7,
-        max_tokens=100,
+        max_tokens=131,
         n=1,
         stop=None,
     )
