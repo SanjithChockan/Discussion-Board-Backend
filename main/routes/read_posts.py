@@ -72,20 +72,8 @@ def get_student_professor_posts(user_id, n=DEFAULT_N):
     # Get all posts for the professors
     posts = Post.query.filter(Post.user_id.in_(professor_ids)).order_by(Post.time_created.desc()).limit(n).all()
     
-    # Format the posts data
-    formatted_posts = []
-    for post in posts:
-        formatted_post = {
-            "id": post.user_id,
-            "title": post.post_title,
-            "content": post.post_content,
-            "timestamp": post.time_created,
-            "professor_id": post.answer_count
-        }
-        formatted_posts.append(formatted_post)
     
-    return jsonify(formatted_posts)
-
+    return jsonify([post.serialize() for post in posts]), 200
 
 # Get recent posts
 @read_posts_bp.route("/get_recent_posts", methods=["GET"])
