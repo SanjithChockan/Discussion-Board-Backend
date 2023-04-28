@@ -12,7 +12,9 @@ class Answer(db.Model):
     time_created = db.Column(db.TIMESTAMP, nullable=False, default=datetime.utcnow)
     parent_answer = db.Column(db.Integer, db.ForeignKey("answers.answer_id"))
 
-    post = db.relationship("Post", backref=db.backref("answers", lazy=True))
+    post = db.relationship(
+        "Post", backref=db.backref("answers", lazy=True, cascade="all, delete-orphan")
+    )
     user = db.relationship("User", backref=db.backref("answers", lazy=True))
 
     @property
@@ -84,6 +86,7 @@ class Course(db.Model):
             "course_id": self.course_id,
             "course_number": self.course_number,
             "course_title": self.course_title,
+            "professor": self.professors.serialize(),
         }
 
 
@@ -130,6 +133,13 @@ class Professor(db.Model):
     user = db.relationship("User", backref=db.backref("professors", uselist=False))
     course = db.relationship("Course", backref=db.backref("professors", uselist=False))
 
+    def serialize(self):
+        return {
+            "user_id": self.user_id,
+            "username": self.user.username,
+            "email": self.user.email,
+        }
+
 
 class Registration(db.Model):
     __tablename__ = "registrations"
@@ -164,5 +174,7 @@ class Vote(db.Model):
     vote_type = db.Column(db.Boolean, nullable=False)
 
     # Define relationships (optional but recommended)
-    answer = db.relationship("Answer", backref=db.backref("votes"))
+    answer = db.relationship(
+        "Answer", backref=db.backref("votes", lazy=True, cascade="all, delete-orphan")
+    )
     user = db.relationship("User", backref=db.backref("votes"))

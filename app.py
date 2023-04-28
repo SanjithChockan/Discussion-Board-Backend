@@ -3,10 +3,10 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager, create_access_token
 from werkzeug.security import generate_password_hash, check_password_hash
+import main.errors
 import datetime
-from util.gpt_api import generate_answer
 
-# from util.gpt_api import generate_answer
+from util.gpt_api import generate_answer
 # import aws_credentials as rds
 import os
 
@@ -30,7 +30,16 @@ db = SQLAlchemy(app)
 jwt = JWTManager(app)
 
 # Importing CRUD blueprints
-from main.routes import read_posts, read_other, create, update_delete, auth, votes
+from main.routes import (
+    read_posts,
+    read_other,
+    create,
+    update_delete,
+    auth,
+    votes,
+    comparison,
+    course_interactions,
+)
 
 app.register_blueprint(read_posts.read_posts_bp)
 app.register_blueprint(read_other.read_other_bp)
@@ -38,11 +47,20 @@ app.register_blueprint(create.create_bp)
 app.register_blueprint(update_delete.update_delete_bp)
 app.register_blueprint(auth.auth_blueprint, url_prefix="/auth")
 app.register_blueprint(votes.votes_bp)
+app.register_blueprint(comparison.comparison_bp)
+app.register_blueprint(course_interactions.courses_bp)
+
+# Error handling
+app.register_error_handler(
+    main.errors.BadRequestError, main.errors.handle_bad_request_error
+)
+app.register_error_handler(
+    main.errors.NotFoundError, main.errors.handle_not_found_error
+)
 
 
 # Testing generating answer based on chat gpt
 @app.route("/")
 def index():
-    #print(generate_answer('When is my final exam', 5))
     # print(generate_answer("when is office hours"))
     return "hello!"

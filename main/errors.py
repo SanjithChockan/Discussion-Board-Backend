@@ -1,11 +1,21 @@
-from main import app
 from flask import jsonify
 
-@app.errorhandler(404)
-def not_found_error(error):
-    return jsonify({'error': 'Not found'}), 404
 
-@app.errorhandler(500)
-def internal_error(error):
-    #db.session.rollback()
-    return jsonify({'error': 'Internal server error'}), 500
+class BadRequestError(Exception):
+    def __init__(self, message):
+        self.message = message
+
+
+class NotFoundError(Exception):
+    def __init__(self, message):
+        self.message = message
+
+
+def handle_bad_request_error(error):
+    response = jsonify({"error": error.message})
+    response.status_code = 400
+    return response
+
+
+def handle_not_found_error(error):
+    response = jsonify({"error": error})

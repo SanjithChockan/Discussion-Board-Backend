@@ -3,6 +3,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from ..models import *
 from util import rule_based, gpt_api
 from datetime import datetime
+from ..errors import BadRequestError
 
 votes_bp = Blueprint("votes", __name__)
 
@@ -12,6 +13,12 @@ votes_bp = Blueprint("votes", __name__)
 @jwt_required()
 def upvote_post():
     data = request.get_json()
+    # Error Handling
+    required_keys = ["answer_id"]
+    for key in required_keys:
+        if key not in data:
+            raise BadRequestError(f"Missing {key}")
+
     answer_id = data["answer_id"]
     user_id = get_jwt_identity()
 
@@ -36,6 +43,12 @@ def upvote_post():
 @jwt_required()
 def downvote_post():
     data = request.get_json()
+    # Error Handling
+    required_keys = ["answer_id"]
+    for key in required_keys:
+        if key not in data:
+            raise BadRequestError(f"Missing {key}")
+
     user_id = get_jwt_identity()
     answer_id = data["answer_id"]
 
@@ -60,6 +73,12 @@ def downvote_post():
 @jwt_required()
 def undo_vote():
     data = request.get_json()
+    # Error Handling
+    required_keys = ["answer_id"]
+    for key in required_keys:
+        if key not in data:
+            raise BadRequestError(f"Missing {key}")
+
     user_id = get_jwt_identity()
     answer_id = data["answer_id"]
 

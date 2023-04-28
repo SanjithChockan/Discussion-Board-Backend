@@ -3,6 +3,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from ..models import *
 from util import rule_based, gpt_api
 from datetime import datetime
+from ..errors import BadRequestError
 
 create_bp = Blueprint("create", __name__)
 
@@ -12,6 +13,12 @@ create_bp = Blueprint("create", __name__)
 @jwt_required()
 def create_post():
     data = request.get_json()
+    # Error Handling
+    required_keys = ["post_title", "post_content", "course_id"]
+    for key in required_keys:
+        if key not in data:
+            raise BadRequestError(f"Missing {key}")
+
     user_id = get_jwt_identity()
     course_id = data["course_id"]
     title = data["post_title"]
@@ -52,6 +59,12 @@ def create_post():
 @jwt_required()
 def create_answer():
     data = request.get_json()
+    # Error Handling
+    required_keys = ["post_id", "answer_content", "parent_answer"]
+    for key in required_keys:
+        if key not in data:
+            raise BadRequestError(f"Missing {key}")
+
     user_id = get_jwt_identity()
     post_id = data["post_id"]
     answer_content = data["answer_content"]
