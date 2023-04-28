@@ -24,10 +24,10 @@ def get_specific_post(post_id):
 
 
 # Get related post(s) based on post_id (so similar to a specific post):
-@read_posts_bp.route("/get_related_posts/<int:post_id>", methods=["GET"])
-@read_posts_bp.route("/get_related_posts/<int:post_id>/<int:n>", methods=["GET"])
-def get_related_posts(post_id, n=DEFAULT_N):
-    related_post_ids = related_post_and_search.find_most_related_posts(post_id, n)
+@read_posts_bp.route("/get_related_posts/<int:post_id>/<int:course_id>", methods=["GET"])
+@read_posts_bp.route("/get_related_posts/<int:post_id>/<int:course_id>/<int:n>", methods=["GET"])
+def get_related_posts(post_id,  course_id, n=DEFAULT_N):
+    related_post_ids = related_post_and_search.find_most_related_posts(post_id, n, course_id)
     posts = []
     if related_post_ids:
         posts = Post.query.filter(Post.post_id.in_(related_post_ids)).limit(n).all()
@@ -57,6 +57,20 @@ def get_recommended_posts(n=DEFAULT_N):
 def get_professor_posts(professor_id, n=DEFAULT_N):
     posts = Post.query.filter_by(user_id=professor_id).limit(n).all()
     return jsonify([post.serialize() for post in posts]), 200
+
+# #Get all professors posts for the classes of a particular student
+# @read_posts_bp.route("/get_student_professor_posts/<int:user_id>", methods=["GET"])
+# @read_posts_bp.route("/get_student_professor_posts/<int:user_id>/<int:n>", methods=["GET"])
+# def get_student_professor_posts(user_id, n=DEFAULT_N):
+# # Find all classes for the student
+#     classes = Class.query.filter_by(student_id=user_id).all()
+#     # Get all the posts for the classes taught by each professor
+#     professor_posts = []
+#     for c in classes:
+#         professor = c.professor
+#         posts = Post.query.filter_by(class_id=c.id, author_id=professor.id).order_by(Post.timestamp.desc()).limit(n).all()
+#         professor_posts.append({"professor_name": professor.name, "posts": posts})
+#     return jsonify({"professor_posts": professor_posts})
 
 
 # Get recent posts
