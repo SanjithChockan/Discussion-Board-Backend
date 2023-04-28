@@ -1,5 +1,5 @@
 from flask import jsonify, request, Blueprint
-from ..models import Answer, Course, User
+from ..models import *
 from util import related_post_and_search
 from app import db
 from sqlalchemy import text
@@ -37,6 +37,10 @@ def get_answers_for_post(post_id, n=DEFAULT_N):
     )
 
     answers = session.query(Answer).from_statement(query).params(post_id=post_id).all()
+    count = len(answers)
+    post = Post.query.filter_by(post_id=post_id).first()
+    post.answer_count = count
+    db.session.commit()
 
     def build_nested_dict(answers, parent_id=None):
         nested_answers = []
