@@ -58,19 +58,33 @@ def get_professor_posts(professor_id, n=DEFAULT_N):
     posts = Post.query.filter_by(user_id=professor_id).limit(n).all()
     return jsonify([post.serialize() for post in posts]), 200
 
-# #Get all professors posts for the classes of a particular student
-# @read_posts_bp.route("/get_student_professor_posts/<int:user_id>", methods=["GET"])
-# @read_posts_bp.route("/get_student_professor_posts/<int:user_id>/<int:n>", methods=["GET"])
-# def get_student_professor_posts(user_id, n=DEFAULT_N):
-# # Find all classes for the student
-#     classes = Class.query.filter_by(student_id=user_id).all()
-#     # Get all the posts for the classes taught by each professor
-#     professor_posts = []
-#     for c in classes:
-#         professor = c.professor
-#         posts = Post.query.filter_by(class_id=c.id, author_id=professor.id).order_by(Post.timestamp.desc()).limit(n).all()
-#         professor_posts.append({"professor_name": professor.name, "posts": posts})
-#     return jsonify({"professor_posts": professor_posts})
+#Get all professors posts for the classes of a particular student
+@read_posts_bp.route("/get_student_professor_posts/<int:user_id>", methods=["GET"])
+@read_posts_bp.route("/get_student_professor_posts/<int:user_id>/<int:n>", methods=["GET"])
+def get_student_professor_posts(user_id, n=DEFAULT_N):
+    registrations = Registration.query.filter_by(student_id=user_id).all()
+    course_ids = [registration.course_id for registration in registrations]
+
+    # Get all professor IDs teaching the courses the student is registered in
+    professors = Professor.query.filter(Professor.course_id.in_(course_ids)).all()
+    professor_ids = [professor.user_id for professor in professors]
+
+    # Get all posts for the professors
+    posts = Post.query.filter(Post.user_id.in_(professor_ids)).order_by(Post.time_created.desc()).limit(n).all()
+    
+    # Format the posts data
+    formatted_posts = []
+    for post in posts:
+        formatted_post = {
+            "id": post.user_id,
+            "title": post.post_title,
+            "content": post.post_content,
+            "timestamp": post.time_created,
+            "professor_id": post.answer_count
+        }
+        formatted_posts.append(formatted_post)
+    
+    return jsonify(formatted_posts)
 
 
 # Get recent posts
