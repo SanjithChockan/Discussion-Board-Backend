@@ -24,10 +24,10 @@ def get_specific_post(post_id):
 
 
 # Get related post(s) based on post_id (so similar to a specific post):
-@read_posts_bp.route("/get_related_posts/<int:post_id>", methods=["GET"])
-@read_posts_bp.route("/get_related_posts/<int:post_id>/<int:n>", methods=["GET"])
-def get_related_posts(post_id, n=DEFAULT_N):
-    related_post_ids = related_post_and_search.find_most_related_posts(post_id, n)
+@read_posts_bp.route("/get_related_posts/<int:post_id>/<int:course_id>", methods=["GET"])
+@read_posts_bp.route("/get_related_posts/<int:post_id>/<int:course_id>/<int:n>", methods=["GET"])
+def get_related_posts(post_id,  course_id, n=DEFAULT_N):
+    related_post_ids = related_post_and_search.find_most_related_posts(post_id, n, course_id)
     posts = []
     if related_post_ids:
         posts = Post.query.filter(Post.post_id.in_(related_post_ids)).limit(n).all()
@@ -58,6 +58,22 @@ def get_professor_posts(professor_id, n=DEFAULT_N):
     posts = Post.query.filter_by(user_id=professor_id).limit(n).all()
     return jsonify([post.serialize() for post in posts]), 200
 
+#Get all professors posts for the classes of a particular student
+@read_posts_bp.route("/get_student_professor_posts/<int:user_id>", methods=["GET"])
+@read_posts_bp.route("/get_student_professor_posts/<int:user_id>/<int:n>", methods=["GET"])
+def get_student_professor_posts(user_id, n=DEFAULT_N):
+    registrations = Registration.query.filter_by(student_id=user_id).all()
+    course_ids = [registration.course_id for registration in registrations]
+
+    # Get all professor IDs teaching the courses the student is registered in
+    professors = Professor.query.filter(Professor.course_id.in_(course_ids)).all()
+    professor_ids = [professor.user_id for professor in professors]
+
+    # Get all posts for the professors
+    posts = Post.query.filter(Post.user_id.in_(professor_ids)).order_by(Post.time_created.desc()).limit(n).all()
+    
+    
+    return jsonify([post.serialize() for post in posts]), 200
 
 # Get recent posts
 @read_posts_bp.route("/get_recent_posts", methods=["GET"])
